@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<script src="assets/js/gate.js?v=68"></script>
+<script src="assets/js/feedback.js?v=68" defer></script>
+<meta name="theme-color" content="#107C10">
+<link rel="manifest" href="manifest.webmanifest?v=68">
+<link rel="icon" href="assets/img/icons/favicon-32.png?v=68" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/icons/apple-touch-icon.png?v=68">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Passle">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+<title>Higher or Lower — Passle</title>
+<link rel="stylesheet" href="assets/css/style.css?v=68">
+<style>
+  .versus { display:grid; grid-template-columns:1fr 64px 1fr; gap:10px; align-items:stretch; }
+  @media (max-width:520px){ .versus{ grid-template-columns:1fr; } .vs{ order:0; } }
+  .vcard { position:relative; border:1px solid var(--stroke); border-radius:var(--radius); overflow:hidden; background:#000; min-height:220px; display:flex; flex-direction:column; }
+  .vcard .art { flex:1; background-size:cover; background-position:center; min-height:150px; }
+  .vcard .cap { padding:12px; background:var(--bg-elev); }
+  .vcard .cap h3 { margin:0 0 3px; font-size:16px; }
+  .vcard .cap .sub { color:var(--text-dim); font-size:12px; }
+  .vcard .score { font-size:34px; font-weight:800; color:var(--xbox-green-bright); text-align:center; padding:6px 0; }
+  .vcard .qmark { font-size:34px; font-weight:800; color:var(--text-dim); text-align:center; padding:6px 0; }
+  .vs { display:grid; place-items:center; font-weight:800; color:var(--text-dim); font-size:18px; }
+  .hlbtns { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+  .streakbar { text-align:center; margin:8px 0 14px; font-size:15px; }
+  .streakbar b { color:var(--xbox-green-bright); font-size:20px; }
+</style>
+</head>
+<body>
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('gtp_settings'))||{};if(s.og)document.body.classList.add('og-theme');else if(s.theme==='gears')document.body.classList.add('gears-theme');else if(s.light)document.body.classList.add('light-theme');}catch(e){}})();</script>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand" onclick="location.href='index.html'">
+      <div class="xlogo"><svg viewBox="0 0 24 24"><path d="M4.102 21.033A11.947 11.947 0 0 0 12 24a11.96 11.96 0 0 0 7.902-2.967c1.877-1.912-4.316-8.709-7.902-11.417-3.582 2.708-9.779 9.505-7.898 11.417zm11.16-14.406c2.5 2.961 7.484 10.313 6.076 12.912A11.942 11.942 0 0 0 24 12.004a11.95 11.95 0 0 0-3.57-8.537s-.027-.02-.082-.024c-.063-.004-.211.031-.607.257-.643.368-1.949 1.542-4.482 4.927zM3.57 3.467A11.952 11.952 0 0 0 0 12.004c0 2.4.705 4.633 1.917 6.505l.056.026c.02 0-1.61-2.735 6.083-12.94-2.532-3.386-3.838-4.56-4.482-4.928-.396-.226-.545-.261-.607-.257a.221.221 0 0 0-.082.024l-.106.028c-.011.049 1.694 2.081 4.888 5.972zM12 3.24l.037.024c.752-.503 4.184-2.712 6.437-3.223A11.947 11.947 0 0 0 12 0a11.94 11.94 0 0 0-6.47 1.898c-.023.005 4.294 1.4 6.433 3.34z"/></svg></div>
+      <h1>Pass<span class="accent">le</span></h1>
+    </div>
+    <button class="iconbtn aboutbtn" onclick="location.href='about.html'" title="About, credits &amp; sources">&#8505;&#65039;</button>
+    <button class="iconbtn" onclick="location.href='index.html'" title="Home">&#127968;</button>
+  </div>
+  <div class="tagline">&#9878;&#65039; Higher or Lower — which scored better with critics?</div>
+
+  <div class="streakbar">Streak: <b id="streak">0</b> &nbsp;•&nbsp; Best: <span id="best">0</span></div>
+
+  <div id="board"></div>
+  <div id="controls"></div>
+  <div id="result" class="hidden"></div>
+</div>
+
+<script src="assets/js/data.js?v=68"></script>
+<script src="assets/js/profile.js?v=68"></script>
+<script src="assets/js/usage.js?v=68"></script>
+<script src="assets/js/identity.js?v=68"></script>
+<script src="assets/js/leaderboard.js?v=68"></script>
+<script src="assets/js/dailyboard.js?v=68"></script>
+<script src="assets/js/lighttheme.js?v=68"></script>
+<script src="assets/js/endlesstoggle.js?v=68"></script>
+<script src="assets/js/sfx.js?v=68"></script>
+<script src="assets/js/gamepad.js?v=68"></script>
+<script src="assets/js/vkeyboard.js?v=68"></script>
+<script src="assets/js/confetti.js?v=68"></script>
+<script src="assets/js/reveal.js?v=68"></script>
+  <script src="assets/js/engine.js?v=68"></script>
+<script src="assets/js/gauntlet.js?v=68"></script>
+<script>
+(async function () {
+  await GTP.load();
+  const S = GTPEngine.getSettings();
+  const mode = 'higherlower';
+  GTPEngine.applyTheme(S);
+  const HINT_BUDGET = GTPEngine.difficulty(S).hints;
+  GTP.hints.init(mode, HINT_BUDGET);
+
+  let pool = GTP.pool(S)
+    .filter(g => typeof g.criticScore === 'number' && g.criticScore > 0 && g.images && (g.images.hero || g.images.boxart));
+  if (pool.length < 4 && !S.og) pool = GTP.filter('current', null)
+    .filter(g => typeof g.criticScore === 'number' && g.criticScore > 0 && g.images && (g.images.hero || g.images.boxart));
+
+  const board = document.getElementById('board');
+  const controls = document.getElementById('controls');
+
+  if (pool.length < 4) {
+    board.innerHTML = '<div class="panel center">Critic scores aren\'t loaded yet.<br>' +
+      '<span class="small">Run <code>scripts/enrich_igdb.py --games</code> to enable this mode.</span></div>';
+    return;
+  }
+  const seed = (function () {
+    let h = 2166136261 >>> 0; const s = mode + '|' + GTP.todayKey();
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+    return h >>> 0;
+  })();
+  const rnd = S.daily ? GTP.mulberry32(seed) : GTP.mulberry32(GTP.randSeed());
+
+  function pick(exclude) {
+    if (!S.daily) return GTP.rng.pick(mode, pool, null, exclude ? [exclude.id] : []);
+    let g, tries = 0;
+    do { g = pool[Math.floor(rnd() * pool.length)]; tries++; }
+    while (exclude && g.id === exclude.id && tries < 50);
+    return g;
+  }
+
+  let left = pick(null), right = pick(left);
+  let streak = 0, done = false;
+  document.getElementById('best').textContent = GTP.streak.best(mode);
+
+  function art(g) { return g.images.hero || g.images.boxart; }
+
+  function render(revealRight) {
+    board.innerHTML =
+      '<div class="versus">' +
+      card(left, true) +
+      '<div class="vs">VS</div>' +
+      card(right, revealRight) +
+      '</div>';
+  }
+  function card(g, reveal) {
+    return '<div class="vcard">' +
+      '<div class="art" style="background-image:url(\'' + (art(g) || '') + '\')"></div>' +
+      '<div class="cap"><h3>' + GTPEngine.escapeHtml(g.title) + '</h3>' +
+      '<div class="sub">' + [GTPEngine.escapeHtml(g.developer), g.year || ''].filter(Boolean).join(' • ') + '</div>' +
+      (reveal ? '<div class="score">' + g.criticScore + '</div>' : '<div class="qmark">?</div>') +
+      '</div></div>';
+  }
+
+  function renderControls() {
+    controls.innerHTML =
+      '<div class="hlbtns">' +
+      '<button class="btn" id="lowerBtn">▼ Lower</button>' +
+      '<button class="btn primary" id="higherBtn">▲ Higher</button>' +
+      '</div><div class="small center" style="margin-top:8px">Is <b>' +
+      GTPEngine.escapeHtml(right.title) + '</b> rated higher or lower than <b>' +
+      GTPEngine.escapeHtml(left.title) + '</b> (' + left.criticScore + ')?</div>' +
+      '<div class="btnrow" style="margin-top:10px;justify-content:center"><button class="btn hintbtn" id="hintBtn" type="button"></button></div>';
+    document.getElementById('higherBtn').onclick = () => guess('higher');
+    document.getElementById('lowerBtn').onclick = () => guess('lower');
+    updateHintBtn();
+  }
+
+  function updateHintBtn() {
+    const b = document.getElementById('hintBtn'); if (!b) return;
+    if (HINT_BUDGET === 0) { b.style.display = 'none'; return; }
+    const a = GTP.hints.available(mode);
+    const left = GTP.hints.left(mode);
+    b.disabled = !a; b.classList.toggle('locked', !a);
+    b.innerHTML = a ? ('💡 Hint' + (left > 1 ? ' (' + left + ')' : '')) : ('🔒 ' + GTP.hints.needed(mode));
+    b.title = a ? ('Reveal the mystery score\u2019s range (' + left + ' left, refreshes every 10 in a row)')
+      : ('Hint refreshes after ' + GTP.hints.needed(mode) + ' more correct in a row');
+    b.onclick = function () {
+      if (done) return;
+      if (!GTP.hints.available(mode)) { GTPEngine.toast('🔒 Hint locked — win ' + GTP.hints.needed(mode) + ' more in a row'); updateHintBtn(); return; }
+      const lo = Math.floor(right.criticScore / 10) * 10;
+      hintBox.innerHTML = '<span class="lbl">💡 Hint</span>' + GTPEngine.escapeHtml(right.title) + '\u2019s score is in the ' + lo + 's';
+      hintBox.classList.remove('hidden');
+      GTP.hints.use(mode); updateHintBtn();
+    };
+  }
+
+  function guess(dir) {
+    if (done) return;
+    const correct = (right.criticScore >= left.criticScore) ? 'higher' : 'lower';
+    render(true);
+    // Daily Gauntlet: a single question, then report + advance.
+    if (window.GTPGauntlet && GTPGauntlet.active()) {
+      done = true;
+      controls.innerHTML = '';
+      const ok = dir === correct;
+      GTP.stats.record(mode, ok, ok ? 1 : 0);
+      const res = document.getElementById('result');
+      res.innerHTML = '<div class="result"><h2>' + (ok ? '\u2705 Correct' : '\u274C Missed') + '</h2>' +
+        '<div class="ans">' + GTPEngine.escapeHtml(right.title) + ' scored ' + right.criticScore +
+        ' vs ' + GTPEngine.escapeHtml(left.title) + ' ' + left.criticScore + '</div>' +
+        '<div class="btnrow" style="margin-top:14px"></div></div>';
+      res.classList.remove('hidden');
+      if (window.GTP && GTP.reveal) GTP.reveal.attach(res, right);
+      GTPGauntlet.onResult({ mode: mode, solved: ok, score: ok ? 100 : 0 });
+      return;
+    }
+    if (dir === correct) {
+      streak = GTP.streak.win(mode);
+      document.getElementById('streak').textContent = streak;
+      document.getElementById('best').textContent = GTP.streak.best(mode);
+      setTimeout(() => {
+        left = right; right = pick(left);
+        hintBox.classList.add('hidden'); hintBox.innerHTML = '';
+        render(false); renderControls();
+      }, 900);
+    } else {
+      end();
+    }
+  }
+
+  function end() {
+    done = true;
+    controls.innerHTML = '';
+    GTP.stats.record(mode, streak > 0, streak);
+    GTP.streak.recordBest(mode, streak);
+    GTP.streak.reset(mode);
+    document.getElementById('best').textContent = GTP.streak.best(mode);
+
+    const res = document.getElementById('result');
+    res.innerHTML = '<div class="result"><h2>💥 Streak ended</h2>' +
+      '<div class="ans">You got ' + streak + ' right</div>' +
+      '<div class="meta">' + GTPEngine.escapeHtml(right.title) + ' scored ' + right.criticScore +
+      ' vs ' + GTPEngine.escapeHtml(left.title) + ' ' + left.criticScore + '</div>' +
+      '<div class="btnrow" style="margin-top:14px">' +
+      '<button class="btn" id="shareBtn">📤 Share</button>' +
+      (S.daily ? '' : '<button class="btn" id="againBtn">🔄 Again</button>') +
+      '<a class="btn primary" href="index.html">🏠 More modes</a></div></div>';
+    res.classList.remove('hidden');
+    if (window.GTP && GTP.reveal) GTP.reveal.attach(res, right);
+    document.getElementById('shareBtn').onclick = () => {
+      const who = (window.GTPProfile && GTPProfile.name()) ? '  (' + GTPProfile.name() + ')' : '';
+      const txt = 'Passle — Higher/Lower #' + GTP.dayNumber() + who + '\n🎯 Streak: ' + streak + '\n' + location.href.split('?')[0];
+      if (navigator.share) navigator.share({ text: txt }).catch(() => c(txt)); else c(txt);
+      function c(t){ navigator.clipboard.writeText(t).then(()=>GTPEngine.toast('Copied!')).catch(()=>GTPEngine.toast(t)); }
+    };
+    const ab = document.getElementById('againBtn');
+    if (ab) ab.onclick = () => location.reload();
+  }
+
+  const hintBox = document.createElement('div');
+  hintBox.className = 'hintbox hidden'; hintBox.id = 'hint';
+  board.parentNode.insertBefore(hintBox, board);
+
+  render(false);
+  renderControls();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <g fill="#b51212">
+    <path d="M100 4l7 20 21-6 2 22 21 3-6 21 19 10-13 18 13 18-19 10 6 21-21 3-2 22-21-6-7 20-7-20-21 6-2-22-21-3 6-21-19-10 13-18-13-18 19-10-6-21 21-3 2-22 21 6z"/>
+  </g>
+  <circle cx="100" cy="100" r="54" fill="#0c0c0c"/>
+  <circle cx="100" cy="100" r="54" fill="none" stroke="#f02a22" stroke-width="4"/>
+  <g fill="#7a0d0d">
+    <path d="M100 60l6 0 3 8-6 3-6-3 3-8z"/>
+    <path d="M140 100l0 6-8 3-3-6 3-6 8 3z"/>
+    <path d="M100 140l-6 0-3-8 6-3 6 3-3 8z"/>
+    <path d="M60 100l0-6 8-3 3 6-3 6-8-3z"/>
+  </g>
+  <circle cx="100" cy="100" r="22" fill="none" stroke="#f02a22" stroke-width="3"/>
+  <circle cx="100" cy="100" r="10" fill="#5d0707"/>
+</svg>

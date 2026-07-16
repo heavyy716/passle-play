@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<script src="assets/js/gate.js?v=68"></script>
+<script src="assets/js/feedback.js?v=68" defer></script>
+<meta name="theme-color" content="#107C10">
+<link rel="manifest" href="manifest.webmanifest?v=68">
+<link rel="icon" href="assets/img/icons/favicon-32.png?v=68" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/icons/apple-touch-icon.png?v=68">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Passle">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+<title>Daily Gauntlet — Passle</title>
+<link rel="stylesheet" href="assets/css/style.css?v=68">
+</head>
+<body>
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('gtp_settings'))||{};if(s.og)document.body.classList.add('og-theme');else if(s.theme==='gears')document.body.classList.add('gears-theme');else if(s.light)document.body.classList.add('light-theme');}catch(e){}})();</script>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand" onclick="location.href='index.html'">
+      <div class="xlogo"><svg viewBox="0 0 24 24"><path d="M4.102 21.033A11.947 11.947 0 0 0 12 24a11.96 11.96 0 0 0 7.902-2.967c1.877-1.912-4.316-8.709-7.902-11.417-3.582 2.708-9.779 9.505-7.898 11.417zm11.16-14.406c2.5 2.961 7.484 10.313 6.076 12.912A11.942 11.942 0 0 0 24 12.004a11.95 11.95 0 0 0-3.57-8.537s-.027-.02-.082-.024c-.063-.004-.211.031-.607.257-.643.368-1.949 1.542-4.482 4.927zM3.57 3.467A11.952 11.952 0 0 0 0 12.004c0 2.4.705 4.633 1.917 6.505l.056.026c.02 0-1.61-2.735 6.083-12.94-2.532-3.386-3.838-4.56-4.482-4.928-.396-.226-.545-.261-.607-.257a.221.221 0 0 0-.082.024l-.106.028c-.011.049 1.694 2.081 4.888 5.972zM12 3.24l.037.024c.752-.503 4.184-2.712 6.437-3.223A11.947 11.947 0 0 0 12 0a11.94 11.94 0 0 0-6.47 1.898c-.023.005 4.294 1.4 6.433 3.34z"/></svg></div>
+      <h1>Pass<span class="accent">le</span></h1>
+    </div>
+    <button class="iconbtn" onclick="location.href='index.html'" title="Home">&#127968;</button>
+  </div>
+  <div class="tagline">&#127919; Daily Gauntlet Results</div>
+
+  <div id="summary" class="gsummary"></div>
+</div>
+
+<script src="assets/js/data.js?v=68"></script>
+<script src="assets/js/profile.js?v=68"></script>
+<script src="assets/js/sfx.js?v=68"></script>
+<script src="assets/js/confetti.js?v=68"></script>
+<script src="assets/js/engine.js?v=68"></script>
+<script src="assets/js/gauntlet.js?v=68"></script>
+<script src="assets/js/identity.js?v=68"></script>
+<script>
+(function () {
+  var run = GTPGauntlet.state();
+  var el = document.getElementById('summary');
+  if (!run || !(run.results && run.results.length)) {
+    el.innerHTML = '<div class="panel center" style="padding:30px">' +
+      'No gauntlet to show yet.<br><a class="btn primary" href="index.html" style="margin-top:14px">\uD83C\uDFE0 Back to menu</a></div>';
+    return;
+  }
+  var t = GTPGauntlet.totals(run);
+  var diff = '';
+  try { diff = GTPEngine.diffLabel(run.difficulty, { difficulty: run.difficulty, theme: (run.og ? 'default' : GTPEngine.getSettings().theme) }); } catch (e) { diff = run.difficulty; }
+
+  var rows = run.order.map(function (mode, i) {
+    var info = GTPGauntlet.modeInfo(mode) || { icon: '', label: mode };
+    var r = run.results[i];
+    var solved = r && r.solved;
+    var sc = r ? r.score : 0;
+    return '<div class="grow gs-row ' + (solved ? 'won' : 'lost') + '">' +
+      '<span class="gs-ic">' + info.icon + '</span>' +
+      '<span class="gs-nm">' + GTPEngine.escapeHtml(info.label) + '</span>' +
+      '<span class="gs-mark">' + (solved ? '\u2705' : '\u274C') + '</span>' +
+      '<span class="gs-sc">' + sc + '</span>' +
+      '</div>';
+  }).join('');
+
+  var pct = t.total ? Math.round(100 * t.solved / t.total) : 0;
+  var medal = pct === 100 ? '\uD83C\uDFC6 Flawless!' : pct >= 75 ? '\uD83E\uDD47 Great run' : pct >= 50 ? '\uD83E\uDD48 Solid' : pct >= 25 ? '\uD83E\uDD49 Keep going' : '\uD83D\uDCAA Try again';
+
+  el.innerHTML =
+    '<div class="gs-hero">' +
+    '<div class="gs-total"><b>' + t.score + '</b><span>points</span></div>' +
+    '<div class="gs-sub">' + medal + ' \u2014 solved <b>' + t.solved + '</b> of <b>' + t.total + '</b> \u2022 ' + GTPEngine.escapeHtml(diff || '') + '</div>' +
+    '</div>' +
+    '<div class="gs-list">' + rows + '</div>' +
+    '<div class="btnrow" style="margin-top:18px;justify-content:center">' +
+    '<button class="btn" id="shareBtn">\uD83D\uDCE4 Share</button>' +
+    '<a class="btn" href="index.html?view=endless">\u267E\uFE0F Endless</a>' +
+    '<a class="btn primary" href="index.html">\uD83C\uDFE0 Menu</a>' +
+    '</div>';
+
+  document.getElementById('shareBtn').onclick = function () {
+    var who = (window.GTPProfile && GTPProfile.name()) ? '  (' + GTPProfile.name() + ')' : '';
+    var line = run.order.map(function (mode, i) {
+      var r = run.results[i];
+      return (r && r.solved) ? '\uD83D\uDFE9' : '\u2B1B';
+    }).join('');
+    var txt = 'Passle Daily Gauntlet' + who + '\n' + line +
+      '\n\uD83C\uDFAF ' + t.score + ' pts \u2022 ' + t.solved + '/' + t.total + ' solved\n' +
+      location.href.split('?')[0].replace('gauntlet-summary.html', '');
+    if (navigator.share) navigator.share({ text: txt }).catch(function () { copy(txt); }); else copy(txt);
+  };
+  function copy(t) { navigator.clipboard ? navigator.clipboard.writeText(t).then(function () { GTPEngine.toast('Copied!'); }).catch(function () { GTPEngine.toast(t); }) : GTPEngine.toast(t); }
+
+  try { if (pct >= 75 && window.GTP && GTP.confetti) GTP.confetti(); } catch (e) {}
+  // Post today's gauntlet score to the shared daily leaderboard.
+  try {
+    if (window.GTPIdentity) {
+      GTPIdentity.submitDaily({ score: t.score, solved: t.solved, total: t.total,
+        date: (window.GTP && GTP.todayKey) ? GTP.todayKey() : '' });
+    }
+  } catch (e) {}
+  // Restore the player's normal settings now the run is complete.
+  GTPGauntlet.finish();
+})();
+</script>
+</body>
+</html>

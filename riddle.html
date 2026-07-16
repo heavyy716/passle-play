@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<script src="assets/js/gate.js?v=68"></script>
+<script src="assets/js/feedback.js?v=68" defer></script>
+<meta name="theme-color" content="#107C10">
+<link rel="manifest" href="manifest.webmanifest?v=68">
+<link rel="icon" href="assets/img/icons/favicon-32.png?v=68" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/icons/apple-touch-icon.png?v=68">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Passle">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+<title>Riddle Me This — Passle</title>
+<link rel="stylesheet" href="assets/css/style.css?v=68">
+</head>
+<body>
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('gtp_settings'))||{};if(s.og)document.body.classList.add('og-theme');else if(s.theme==='gears')document.body.classList.add('gears-theme');else if(s.light)document.body.classList.add('light-theme');}catch(e){}})();</script>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand" onclick="location.href='index.html'">
+      <div class="xlogo"><svg viewBox="0 0 24 24"><path d="M4.102 21.033A11.947 11.947 0 0 0 12 24a11.96 11.96 0 0 0 7.902-2.967c1.877-1.912-4.316-8.709-7.902-11.417-3.582 2.708-9.779 9.505-7.898 11.417zm11.16-14.406c2.5 2.961 7.484 10.313 6.076 12.912A11.942 11.942 0 0 0 24 12.004a11.95 11.95 0 0 0-3.57-8.537s-.027-.02-.082-.024c-.063-.004-.211.031-.607.257-.643.368-1.949 1.542-4.482 4.927zM3.57 3.467A11.952 11.952 0 0 0 0 12.004c0 2.4.705 4.633 1.917 6.505l.056.026c.02 0-1.61-2.735 6.083-12.94-2.532-3.386-3.838-4.56-4.482-4.928-.396-.226-.545-.261-.607-.257a.221.221 0 0 0-.082.024l-.106.028c-.011.049 1.694 2.081 4.888 5.972zM12 3.24l.037.024c.752-.503 4.184-2.712 6.437-3.223A11.947 11.947 0 0 0 12 0a11.94 11.94 0 0 0-6.47 1.898c-.023.005 4.294 1.4 6.433 3.34z"/></svg></div>
+      <h1>Pass<span class="accent">le</span></h1>
+    </div>
+    <button class="iconbtn aboutbtn" onclick="location.href='about.html'" title="About, credits &amp; sources">&#8505;&#65039;</button>
+    <button class="iconbtn" onclick="location.href='index.html'" title="Home">&#127968;</button>
+  </div>
+  <div class="tagline">&#129513; Riddle Me This</div>
+
+  <div class="pips" id="pips"></div>
+  <div class="stage" id="stage" style="aspect-ratio:auto;min-height:60px;background:transparent;border:none"></div>
+  <div id="clues" class="clues"></div>
+  <div id="guesses" class="guesses"></div>
+
+  <div id="play">
+    <div class="guessbar">
+      <input id="guessInput" type="text" placeholder="Type a game name…" autocomplete="off" spellcheck="false">
+      <div class="ac" id="ac"></div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="skipBtn">Skip</button>
+      <button class="btn primary" id="submitBtn">Guess</button>
+    </div>
+  </div>
+  <div id="result" class="hidden"></div>
+</div>
+
+<script src="assets/js/data.js?v=68"></script>
+<script src="assets/js/profile.js?v=68"></script>
+<script src="assets/js/usage.js?v=68"></script>
+<script src="assets/js/identity.js?v=68"></script>
+<script src="assets/js/leaderboard.js?v=68"></script>
+<script src="assets/js/dailyboard.js?v=68"></script>
+<script src="assets/js/lighttheme.js?v=68"></script>
+<script src="assets/js/endlesstoggle.js?v=68"></script>
+<script src="assets/js/sfx.js?v=68"></script>
+<script src="assets/js/gamepad.js?v=68"></script>
+<script src="assets/js/vkeyboard.js?v=68"></script>
+<script src="assets/js/confetti.js?v=68"></script>
+<script src="assets/js/reveal.js?v=68"></script>
+  <script src="assets/js/engine.js?v=68"></script>
+<script src="assets/js/gauntlet.js?v=68"></script>
+<script>
+(async function () {
+  await GTP.load();
+
+  // Hide the answer's own words (and franchise tokens) inside any text so a
+  // clue never gives the name away.
+  function maskTitle(text, title) {
+    if (!text) return '';
+    const words = GTP.norm(title).split(' ').filter(w => w.length > 2);
+    let out = text;
+    words.forEach(w => {
+      const re = new RegExp('\\b' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\w*', 'gi');
+      out = out.replace(re, '\u2588\u2588\u2588');
+    });
+    return out;
+  }
+
+  function titlePattern(title) {
+    return title.replace(/[A-Za-z0-9]/g, '_').replace(/ /g, '   ');
+  }
+
+  function initials(title) {
+    return title.split(/\s+/)
+      .map(w => { const m = w.match(/[A-Za-z0-9]/); return m ? m[0].toUpperCase() : ''; })
+      .filter(Boolean).join('.\u2009');
+  }
+
+  // Store/legal boilerplate that leaks into marketing copy — URLs, manual/EULA
+  // notices, subscription smallprint. These make lazy, un-curated "whisper"
+  // clues, so they're stripped before a sentence is ever eligible.
+  const JUNK = /(https?:\/\/|www\.|\b[a-z0-9-]+\.(?:com|net|org)\b|marketplace|game manual|xbox\s*live|internet connection|conditions?\s+and\s+restrictions|restrictions?\s+apply|rights reserved|copyright|trademark|©|®|™|for (?:more information|details)|see\s+www|terms of|privacy policy|online multiplayer|requires? .*subscription|software (?:license|licence))/i;
+
+  // Split marketing copy into usable sentences, then hide the title within them.
+  function riddleSentences(g) {
+    const raw = (g.longDesc || g.shortDesc || '').replace(/\s+/g, ' ').trim();
+    return raw.split(/(?<=[.!?])\s+/)
+      .map(s => s.trim())
+      .filter(s => s.length > 20 && s.length < 220 && !JUNK.test(s))
+      .map(s => maskTitle(s, g.title));
+  }
+
+  const descText = g => (g.longDesc || g.shortDesc || '').replace(/\s+/g, ' ').trim();
+
+  // Genre archetype -> a first-person riddle noun-phrase ("I am ...").
+  const ARCHETYPE = [
+    [/shoot|fps/i, 'a tale told in gunfire'],
+    [/role.?play|rpg/i, 'an epic of heroes and hard-won growth'],
+    [/fight|brawl|beat.?em.?up/i, 'a duel of fists and fury'],
+    [/strateg|tactic|tower/i, 'a contest of wits and patience'],
+    [/rac|driv|kart/i, 'a race with no room for second place'],
+    [/sport|soccer|football|basketball|golf|tennis|hockey/i, 'a test of sporting glory'],
+    [/platform|jump.?n/i, 'a leaping, climbing adventure'],
+    [/puzzle|logic|match.?3/i, 'a knot of logic waiting to be untied'],
+    [/simulation|manage|tycoon|builder|city/i, 'a whole world handed to your control'],
+    [/horror|survival/i, 'a desperate fight to survive the dark'],
+    [/card|deck|board/i, 'a game of cards, luck and nerve'],
+    [/rogue/i, 'a gauntlet that resets each time you fall'],
+    [/advent|explor/i, 'a journey into the unknown'],
+    [/metroidvania/i, 'a sprawling map that unlocks itself piece by piece'],
+    [/action/i, 'a relentless rush of action'],
+  ];
+  // True when a fixed phrase would accidentally contain a word from the title.
+  function leaks(phrase, g) {
+    return maskTitle(phrase, g.title).indexOf('\u2588') !== -1;
+  }
+
+  function archetype(g) {
+    const cat = ((g.categories && g.categories.join(' ')) || g.category || '') + ' ' + descText(g).slice(0, 240);
+    for (const [re, line] of ARCHETYPE) if (re.test(cat) && !leaks(line, g)) return line;
+    return 'a game unlike any you have named';
+  }
+
+  // Setting/world detected from the description -> riddle location phrase.
+  const SETTINGS = [
+    [/\b(galax|interstellar|star ?ship|cosmos|outer space|orbit|planet|alien world)\b/i, 'among distant, uncaring stars'],
+    [/\b(sci-?fi|cyberpunk|cybernetic|dystopia|neon-lit|far future|futuristic|the future)\b/i, 'in a future not yet written'],
+    [/\b(post-?apocalyp|wasteland|ruins of|after the (fall|end)|nuclear)\b/i, 'in a world already ended'],
+    [/\b(medieval|kingdom|castle|knight|throne|empire|the realm|sword and sorcery)\b/i, 'in a realm of crowns and cold steel'],
+    [/\b(zombie|undead|infected|outbreak|the dead)\b/i, 'where the dead refuse to rest'],
+    [/\b(haunt|nightmare|terror|dread|cursed|possess|the darkness)\b/i, 'where dread waits in every shadow'],
+    [/\b(island|jungle|tropical|archipelago)\b/i, 'upon a wild and distant shore'],
+    [/\b(metropolis|city street|urban|downtown|the city|neon)\b/i, 'across a restless, sleepless city'],
+    [/\b(underground|cavern|dungeon|the mines?|beneath the|deep below|dig)\b/i, 'deep below the surface of things'],
+    [/\b(ocean|high seas|pirate|naval|set sail|open water)\b/i, 'out upon the open sea'],
+    [/\b(old west|wild west|frontier|outlaw|cowboy|gunslinger)\b/i, 'on a lawless frontier'],
+    [/\b(magic|wizard|sorcer|arcane|spellcast|enchanted|mythic|fantasy)\b/i, 'in a land thick with old magic'],
+    [/\b(feudal|samurai|ninja|shogun|edo|sengoku)\b/i, 'in an age of blades and honour'],
+    [/\b(school|academy|classmate|high.?school|campus)\b/i, 'within the restless halls of the young'],
+    [/\b(farm|village|cozy|cottage|small town|countryside|garden)\b/i, 'in a quiet, out-of-the-way corner of the world'],
+    [/\b(war|battlefield|frontline|the front|trenches|military|soldier)\b/i, 'upon the churning fields of war'],
+  ];
+  function setting(g) {
+    const d = descText(g);
+    for (const [re, line] of SETTINGS) if (re.test(d) && !leaks(line, g)) return line;
+    return '';
+  }
+
+  // Foes/subjects detected from the description -> "where ... stand in your way".
+  const FOES = [
+    [/\b(horde|monster|beast|creature|abomination)\b/i, 'hordes of monsters'],
+    [/\b(colossus|titan|kaiju|giant boss|massive boss)\b/i, 'titans that dwarf you'],
+    [/\b(alien|extraterrestrial|xeno|invader)\b/i, 'an alien menace'],
+    [/\b(terrorist|insurgent|cartel|mercenar|militia)\b/i, 'ranks of armed men'],
+    [/\b(dragon|wyvern|wyrm)\b/i, 'ancient dragons'],
+    [/\b(demon|devil|hell-?spawn|the legions)\b/i, 'the legions of hell'],
+    [/\b(zombie|undead|the infected)\b/i, 'the walking dead'],
+    [/\b(robot|machine|mech|android|automat|drone)\b/i, 'cold and tireless machines'],
+    [/\b(ghost|spirit|phantom|specter|spectre|haunt)\b/i, 'restless spirits'],
+    [/\b(boss|warlord|overlord|tyrant)\b/i, 'a gallery of deadly bosses'],
+    [/\b(rival|opponent|enemy team|the competition)\b/i, 'determined rivals'],
+  ];
+  function foe(g) {
+    const d = descText(g);
+    for (const [re, line] of FOES) if (re.test(d) && !leaks(line, g)) return line;
+    return '';
+  }
+
+  // Try to lift the protagonist's name straight from the copy ("You are Watcher").
+  function protagonist(g) {
+    const d = descText(g);
+    const pats = [
+      /\byou (?:are|play as|become|control)\s+([A-Z][A-Za-z0-9''.\-]+(?:\s+[A-Z][A-Za-z0-9''.\-]+){0,2})/,
+      /\b(?:play|playing) as\s+([A-Z][A-Za-z0-9''.\-]+(?:\s+[A-Z][A-Za-z0-9''.\-]+){0,2})/,
+      /\bassumes?\s+(?:control of|the role of)\s+([A-Z][A-Za-z0-9''.\-]+(?:\s+[A-Z][A-Za-z0-9''.\-]+){0,2})/,
+      /\b(?:take|takes) (?:on )?the role of\s+([A-Z][A-Za-z0-9''.\-]+(?:\s+[A-Z][A-Za-z0-9''.\-]+){0,2})/,
+    ];
+    const STOP = /^(The|A|An|Your|This|That|One|Two|Three|His|Her|Their|Our|My|New|US|U\.S|As|In|On|It|You)$/i;
+    for (const p of pats) {
+      const m = d.match(p);
+      if (!m) continue;
+      let name = m[1].trim().replace(/[.,;:]$/, '');
+      const first = name.split(/\s+/)[0];
+      if (STOP.test(first)) continue;
+      const masked = maskTitle(name, g.title);
+      if (masked.indexOf('\u2588') !== -1) continue; // name reveals the title
+      return name;
+    }
+    return null;
+  }
+
+  // Compose the opening riddle purely from real, title-free description facts.
+  function riddleLine(g) {
+    const set = setting(g);
+    const fo = foe(g);
+    let line = 'I am ' + archetype(g);
+    if (set) line += ' ' + set;
+    line += (fo ? ', where ' + fo + ' stand in your way' : '') + '. What am I?';
+    return line;
+  }
+
+  // Collapse edition/SKU noise ("… Deluxe Edition", "… GOTY") but KEEP sequel
+  // numbers/numerals so distinct entries in a series (Horizon 4 vs 5) still count
+  // separately. Mirrors data.js NOISE, minus the number-stripping.
+  const KIN_NOISE = new Set(['the', 'of', 'a', 'an', 'and', 'to', 'for',
+    'edition', 'standard', 'deluxe', 'ultimate', 'definitive', 'complete',
+    'remastered', 'remaster', 'remake', 'goty', 'game', 'year', 'collection',
+    'bundle', 'hd', 'anniversary', 'preview', 'trial', 'demo', 'digital',
+    'pc', 'windows', 'console', 'xbox', 'series', 'version', 'pack']);
+  const ROMAN_MAP = { i: '1', ii: '2', iii: '3', iv: '4', v: '5', vi: '6',
+    vii: '7', viii: '8', ix: '9', x: '10', xi: '11', xii: '12', xiii: '13' };
+  function kinKey(title) {
+    return GTP.norm(title).split(' ').map(t => {
+      if (!t || KIN_NOISE.has(t)) return '';
+      if (/^(19|20)\d{2}$/.test(t)) return '';   // drop release-year suffixes
+      return ROMAN_MAP[t] || t;                  // fold "ii" -> "2" so it can't double-count
+    }).filter(Boolean).join(' ');
+  }
+
+  // Count DISTINCT franchise siblings in the catalog. Editions/SKUs of the same
+  // game count once (kinKey collapses them), so the number is the real size of
+  // the series rather than an inflated store listing.
+  function seriesInfo(g) {
+    const toks = GTP.sigTokens(g.title);
+    const selfKey = kinKey(g.title);
+    const kin = new Set();
+    if (toks.length) {
+      GTP.games.forEach(o => {
+        if (o.id === g.id) return;
+        const t2 = GTP.sigTokens(o.title);
+        let n = 0;
+        while (n < toks.length && n < t2.length && toks[n] === t2[n]) n++;
+        // Two shared leading significant tokens = a confident same-series match.
+        if (n >= 2) {
+          const k = kinKey(o.title);
+          if (k && k !== selfKey) kin.add(k);
+        }
+      });
+    }
+    const numbered = /(^|\s)(\d+|ii|iii|iv|vi{0,3}|ix|xi{0,3})(\s|:|$)/i.test(g.title);
+    return { kin: kin.size, numbered };
+  }
+  function seriesLine(g) {
+    const s = seriesInfo(g);
+    if (s.kin >= 1) return 'I\u2019m part of a series \u2014 ' + s.kin + ' other ' +
+      (s.kin === 1 ? 'game shares' : 'games share') + ' my name in this catalog.';
+    if (s.numbered) return 'A number hides in my name \u2014 others came before me.';
+    return 'I stand alone here \u2014 no siblings share my name.';
+  }
+
+  function buildClues(g) {
+    const clues = [];
+    const sents = riddleSentences(g);
+    const hero = protagonist(g);
+    // 1 \u2014 the opening riddle, composed from real (title-free) description facts.
+    clues.push(['The Riddle', riddleLine(g)]);
+    // 2 \u2014 franchise / series hint.
+    clues.push(['The Series', seriesLine(g)]);
+    // 3 \u2014 the hero if we can name one, else a whispered line from the copy.
+    if (hero) {
+      clues.push(['The Hero', 'The one who walks my story answers to \u201C' + hero + '.\u201D']);
+    } else {
+      clues.push(['The Whisper', sents[0] ? '\u201C' + sents[0] + '\u201D' : 'Legend keeps me a mystery\u2026']);
+    }
+    // 4 \u2014 a whispered line straight from my description.
+    const whisper = hero ? sents[0] : sents[1];
+    clues.push(['The Whisper', whisper ? '\u201C' + whisper + '\u201D' : 'My tale is told in hushed tones\u2026']);
+    // 5 \u2014 the era + my makers.
+    const second = (hero ? sents[1] : sents[2]) || '';
+    const makers = 'Crafted by ' + (g.developer || 'unknown hands') +
+      (g.publisher && GTP.norm(g.publisher) !== GTP.norm(g.developer || '') ? ', brought forth by ' + g.publisher : '') + '.';
+    const era = g.year ? 'I made my debut in ' + g.year + '. ' : '';
+    clues.push(['The Era & Makers', era + (second ? '\u201C' + second + '\u201D  ' : '') + makers]);
+    // 6 \u2014 the name itself, skeleton + initials (last resort).
+    clues.push(['The Name', titlePattern(g.title) + '   \u2014 initials ' + initials(g.title) +
+      '  (' + g.title.replace(/[^A-Za-z0-9]/g, '').length + ' letters)']);
+    // Safety net: never let the title slip through a quote, a maker's name or a
+    // stray keyword \u2014 mask it everywhere except the deliberate skeleton clue.
+    return clues.map(([lbl, txt]) => lbl === 'The Name' ? [lbl, txt] : [lbl, maskTitle(txt, g.title)]);
+  }
+
+  GTPEngine.createGame({
+    mode: 'riddle',
+    title: 'Riddle',
+    maxGuesses: 6,
+    hint: function (g) {
+      const inits = g.title.split(/\s+/)
+        .map(w => { const m = w.match(/[A-Za-z0-9]/); return m ? m[0].toUpperCase() : ''; })
+        .filter(Boolean).join('. ');
+      const letters = g.title.replace(/[^A-Za-z0-9]/g, '').length;
+      return 'Title initials: ' + inits + '.  (' + letters + ' letters)';
+    },
+    poolFilter: g => (g.shortDesc || g.longDesc || g.category),
+    reveal: function (step, answer, stageEl, cluesEl, done) {
+      const clues = buildClues(answer);
+      const shown = done ? clues.length : Math.min(step + 1, clues.length);
+      cluesEl.innerHTML = clues.slice(0, shown).map(([lbl, txt]) =>
+        '<div class="clue"><span class="lbl">' + lbl + '</span>' + GTPEngine.escapeHtml(txt) + '</div>'
+      ).join('');
+    },
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<script src="assets/js/gate.js?v=68"></script>
+<script src="assets/js/feedback.js?v=68" defer></script>
+<meta name="theme-color" content="#107C10">
+<link rel="manifest" href="manifest.webmanifest?v=68">
+<link rel="icon" href="assets/img/icons/favicon-32.png?v=68" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/icons/apple-touch-icon.png?v=68">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Passle">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+<title>Guess the Tier — Passle</title>
+<link rel="stylesheet" href="assets/css/style.css?v=68">
+<style>
+  .gamecard { display:flex; gap:14px; align-items:center; background:var(--bg-elev); border:1px solid var(--stroke); border-radius:var(--radius); padding:14px; }
+  .gamecard img { width:96px; height:128px; object-fit:cover; border-radius:8px; flex:none; background:#000; }
+  .gamecard .info h3 { margin:0 0 4px; font-size:19px; }
+  .gamecard .info .sub { color:var(--text-dim); font-size:13px; }
+  .tierpicks { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0; }
+  @media (max-width:520px){ .tierpicks{ grid-template-columns:1fr; } }
+  .tierpick { display:flex; align-items:center; gap:10px; padding:13px 14px; border-radius:10px; border:1px solid var(--stroke); background:var(--bg-elev); cursor:pointer; user-select:none; transition:.12s; }
+  .tierpick:hover { border-color:var(--xbox-green); }
+  .tierpick.sel { background:var(--xbox-green); border-color:var(--xbox-green-bright); color:#fff; font-weight:600; }
+  .tierpick.correct { border-color:var(--xbox-green-bright); box-shadow:0 0 0 2px var(--xbox-green-glow); }
+  .tierpick.wrong { border-color:var(--danger); box-shadow:0 0 0 2px rgba(229,72,77,.3); }
+  .tierpick .box { width:20px;height:20px;border-radius:5px;border:2px solid var(--text-dim);flex:none;display:grid;place-items:center;font-size:13px; }
+  .tierpick.sel .box { border-color:#fff; }
+</style>
+</head>
+<body>
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('gtp_settings'))||{};if(s.og)document.body.classList.add('og-theme');else if(s.theme==='gears')document.body.classList.add('gears-theme');else if(s.light)document.body.classList.add('light-theme');}catch(e){}})();</script>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand" onclick="location.href='index.html'">
+      <div class="xlogo"><svg viewBox="0 0 24 24"><path d="M4.102 21.033A11.947 11.947 0 0 0 12 24a11.96 11.96 0 0 0 7.902-2.967c1.877-1.912-4.316-8.709-7.902-11.417-3.582 2.708-9.779 9.505-7.898 11.417zm11.16-14.406c2.5 2.961 7.484 10.313 6.076 12.912A11.942 11.942 0 0 0 24 12.004a11.95 11.95 0 0 0-3.57-8.537s-.027-.02-.082-.024c-.063-.004-.211.031-.607.257-.643.368-1.949 1.542-4.482 4.927zM3.57 3.467A11.952 11.952 0 0 0 0 12.004c0 2.4.705 4.633 1.917 6.505l.056.026c.02 0-1.61-2.735 6.083-12.94-2.532-3.386-3.838-4.56-4.482-4.928-.396-.226-.545-.261-.607-.257a.221.221 0 0 0-.082.024l-.106.028c-.011.049 1.694 2.081 4.888 5.972zM12 3.24l.037.024c.752-.503 4.184-2.712 6.437-3.223A11.947 11.947 0 0 0 12 0a11.94 11.94 0 0 0-6.47 1.898c-.023.005 4.294 1.4 6.433 3.34z"/></svg></div>
+      <h1>Pass<span class="accent">le</span></h1>
+    </div>
+    <button class="iconbtn aboutbtn" onclick="location.href='about.html'" title="About, credits &amp; sources">&#8505;&#65039;</button>
+    <button class="iconbtn" onclick="location.href='index.html'" title="Home">&#127968;</button>
+  </div>
+  <div class="tagline">&#127903;&#65039; Guess the Tier — which plans include this game?</div>
+
+  <div class="gamecard" id="gamecard"></div>
+  <div class="tierpicks" id="picks"></div>
+  <div id="play">
+    <div class="btnrow"><button class="btn primary" id="submitBtn">Lock in answer</button></div>
+    <div class="small center" style="margin-top:8px">Pick every plan you think currently includes this game.</div>
+  </div>
+  <div id="result" class="hidden"></div>
+</div>
+
+<script src="assets/js/data.js?v=68"></script>
+<script src="assets/js/profile.js?v=68"></script>
+<script src="assets/js/usage.js?v=68"></script>
+<script src="assets/js/identity.js?v=68"></script>
+<script src="assets/js/leaderboard.js?v=68"></script>
+<script src="assets/js/dailyboard.js?v=68"></script>
+<script src="assets/js/lighttheme.js?v=68"></script>
+<script src="assets/js/endlesstoggle.js?v=68"></script>
+<script src="assets/js/sfx.js?v=68"></script>
+<script src="assets/js/gamepad.js?v=68"></script>
+<script src="assets/js/vkeyboard.js?v=68"></script>
+<script src="assets/js/confetti.js?v=68"></script>
+<script src="assets/js/reveal.js?v=68"></script>
+  <script src="assets/js/engine.js?v=68"></script>
+<script src="assets/js/gauntlet.js?v=68"></script>
+<script>
+(async function () {
+  await GTP.load();
+  const S = GTPEngine.getSettings();
+  const TIERS = [
+    ['essential', 'Essential'], ['premium', 'Premium'], ['ultimate', 'Ultimate'],
+    ['pc', 'PC Game Pass'],
+  ];
+  const dayKey = GTP.todayKey();
+  const mode = 'tier';
+
+  // pool: current games with box art; require at least one modern plan membership
+  let pool = GTP.pool(S).filter(g => g.images && g.images.boxart);
+  if (!pool.length && !GTP.noSelection(S) && !S.og) pool = GTP.filter('current', null).filter(g => g.images && g.images.boxart);
+  if (!pool.length) {
+    const gcEmpty = document.getElementById('gamecard');
+    if (gcEmpty) gcEmpty.innerHTML = '<div class="panel center" style="padding:34px 20px">' +
+      '<div style="font-size:42px;margin-bottom:8px">\uD83C\uDFAE</div>' +
+      '<h2 style="margin:0 0 6px">No subscriptions selected</h2>' +
+      '<p class="small" style="margin:0 0 16px">Pick at least one Game Pass plan to start playing.</p>' +
+      '<a class="btn primary" href="index.html">\u2699\uFE0F Open settings</a></div>';
+    return;
+  }
+
+  let answer = S.daily
+    ? pool[GTP.dailyIndex(mode, pool.length, dayKey)]
+    : GTP.rng.pick(mode, pool);
+
+  const picked = new Set();
+  let done = false;
+
+  // restore
+  if (S.daily) {
+    const saved = GTP.daily.load(mode, dayKey);
+    if (saved && saved.answerId === answer.id && saved.done) { done = true; (saved.picks || []).forEach(p => picked.add(p)); }
+  }
+
+  const gc = document.getElementById('gamecard');
+  function renderCard() {
+    gc.innerHTML =
+      '<img src="' + (answer.images.boxart || '') + '" alt="">' +
+      '<div class="info"><h3>' + GTPEngine.escapeHtml(answer.title) + '</h3>' +
+      '<div class="sub">' + [GTPEngine.escapeHtml(answer.developer), answer.year || ''].filter(Boolean).join(' • ') + '</div>' +
+      '<div class="sub">' + GTPEngine.escapeHtml(answer.category || '') + '</div></div>';
+  }
+  renderCard();
+
+  // ---- hint (1 per session, refreshes every 10 in a row) ----
+  const hintBox = document.createElement('div');
+  hintBox.className = 'hintbox hidden'; hintBox.id = 'hint';
+  const picksHost = document.getElementById('picks');
+  picksHost.parentNode.insertBefore(hintBox, picksHost);
+  const hintBtn = document.createElement('button');
+  hintBtn.className = 'btn hintbtn'; hintBtn.type = 'button'; hintBtn.id = 'hintBtn';
+  const tierBtnrow = document.querySelector('#play .btnrow');
+  tierBtnrow.insertBefore(hintBtn, tierBtnrow.firstChild);
+  function updateHintBtn() {
+    if (done) { hintBtn.style.display = 'none'; return; }
+    hintBtn.style.display = '';
+    const a = GTP.hints.available(mode);
+    hintBtn.disabled = !a;
+    hintBtn.classList.toggle('locked', !a);
+    hintBtn.innerHTML = a ? '💡 Hint' : ('🔒 ' + GTP.hints.needed(mode));
+    hintBtn.title = a ? 'Reveal a hint (one per session, refreshes every 10 in a row)'
+      : ('Hint refreshes after ' + GTP.hints.needed(mode) + ' more correct in a row');
+  }
+  hintBtn.onclick = function () {
+    if (done) return;
+    if (!GTP.hints.available(mode)) { GTPEngine.toast('🔒 Hint locked — win ' + GTP.hints.needed(mode) + ' more in a row'); updateHintBtn(); return; }
+    const n = TIERS.filter(([k]) => answer.tiers[k]).length;
+    hintBox.innerHTML = '<span class="lbl">💡 Hint</span>Included in ' + n + ' of ' + TIERS.length + ' plan' + (n === 1 ? '' : 's');
+    hintBox.classList.remove('hidden');
+    GTP.hints.use(mode);
+    updateHintBtn();
+  };
+  updateHintBtn();
+
+  const picksEl = document.getElementById('picks');
+  function renderPicks() {
+    picksEl.innerHTML = TIERS.map(([k, lbl]) => {
+      let cls = 'tierpick';
+      if (!done && picked.has(k)) cls += ' sel';
+      if (done) {
+        const inPlan = !!answer.tiers[k];
+        const chose = picked.has(k);
+        if (chose === inPlan) cls += (inPlan ? ' sel correct' : ' correct');
+        else cls += ' wrong';
+      }
+      const check = (done ? !!answer.tiers[k] : picked.has(k)) ? '✓' : '';
+      return '<div class="' + cls + '" data-k="' + k + '"><span class="box">' + check + '</span>' +
+        GTPEngine.escapeHtml(lbl) + (done && answer.tiers[k] ? ' <span class="small">(included)</span>' : '') + '</div>';
+    }).join('');
+    if (!done) picksEl.querySelectorAll('.tierpick').forEach(el => el.onclick = () => {
+      const k = el.dataset.k;
+      if (picked.has(k)) picked.delete(k); else picked.add(k);
+      renderPicks();
+    });
+  }
+  renderPicks();
+
+  function finish() {
+    done = true;
+    updateHintBtn();
+    let correct = 0;
+    TIERS.forEach(([k]) => { if (picked.has(k) === !!answer.tiers[k]) correct++; });
+    const won = correct === TIERS.length;
+    renderPicks();
+    // In a Daily Gauntlet this is a single round: record it, hand off to the
+    // gauntlet runner (which injects its own "Next Challenge" CTA) and never
+    // offer the endless "Next" loop.
+    const inGauntlet = !!(window.GTPGauntlet && GTPGauntlet.active());
+    const stats = GTP.stats.record(mode, won, 1);
+    if (!S.daily && !inGauntlet) { if (won) GTP.streak.win(mode); else GTP.streak.reset(mode); }
+    if (S.daily) GTP.daily.save(mode, dayKey, { answerId: answer.id, done: true, won: won, picks: [...picked] });
+
+    document.getElementById('play').classList.add('hidden');
+    const res = document.getElementById('result');
+    res.innerHTML =
+      '<div class="result"><h2>' + (won ? '🎉 Perfect!' : '✅ ' + correct + '/' + TIERS.length + ' correct') + '</h2>' +
+      '<div class="ans">' + GTPEngine.escapeHtml(answer.title) + '</div>' +
+      '<div class="meta">Included in: ' + (TIERS.filter(([k]) => answer.tiers[k]).map(([, l]) => l).join(', ') || 'none of these') + '</div>' +
+      '<div class="btnrow" style="margin-top:14px">' +
+      '<button class="btn" id="shareBtn">📤 Share</button>' +
+      (inGauntlet ? '' :
+        ((S.daily ? '' : '<button class="btn primary" id="nextBtn">▶ Next</button>') +
+         '<a class="btn' + (S.daily ? ' primary' : '') + '" href="index.html">🏠 More modes</a>')) +
+      '</div>' +
+      '<div class="small" style="margin-top:10px">Streak: ' + GTP.streak.current(mode) + ' • Best: ' + GTP.streak.best(mode) + ' • Played: ' + (stats.played || 0) +
+      ' • Win rate: ' + (stats.played ? Math.round(100 * stats.wins / stats.played) : 0) + '%</div></div>';
+    res.classList.remove('hidden');
+    if (won && window.GTP && GTP.confetti) GTP.confetti();
+    if (window.GTP && GTP.reveal) GTP.reveal.attach(res, answer);
+    const gcEl = document.getElementById('gamecard');
+    if (gcEl) gcEl.insertAdjacentElement('afterend', res);
+    document.getElementById('shareBtn').onclick = () => {
+      const grid = TIERS.map(([k]) => (picked.has(k) === !!answer.tiers[k]) ? '🟩' : '🟥').join('');
+      const who = (window.GTPProfile && GTPProfile.name()) ? '  (' + GTPProfile.name() + ')' : '';
+      const txt = 'Passle — Tier #' + GTP.dayNumber() + who + '\n' + grid + ' ' + correct + '/' + TIERS.length + '\n' + location.href.split('?')[0];
+      if (navigator.share) navigator.share({ text: txt }).catch(() => copy(txt)); else copy(txt);
+    };
+    function copy(t){ navigator.clipboard.writeText(t).then(()=>GTPEngine.toast('Copied results!')).catch(()=>GTPEngine.toast(t)); }
+    const nb = document.getElementById('nextBtn');
+    if (nb) nb.onclick = newRound;
+    if (inGauntlet) GTPGauntlet.onResult({ mode: mode, solved: won, score: won ? 100 : Math.round(100 * correct / TIERS.length) });
+  }
+
+  function newRound() {
+    answer = S.daily
+      ? pool[GTP.dailyIndex(mode, pool.length, dayKey)]
+      : GTP.rng.pick(mode, pool);
+    picked.clear();
+    done = false;
+    const res = document.getElementById('result');
+    res.classList.add('hidden'); res.innerHTML = '';
+    document.getElementById('play').classList.remove('hidden');
+    hintBox.classList.add('hidden'); hintBox.innerHTML = '';
+    renderCard(); renderPicks(); updateHintBtn();
+  }
+
+  document.getElementById('submitBtn').onclick = finish;
+  if (done) finish();
+})();
+</script>
+</body>
+</html>

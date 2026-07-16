@@ -1,0 +1,21 @@
+{
+  "built": "2026-07-14T03:59:31.855763+00:00",
+  "market": "US",
+  "count": 882,
+  "planCounts": {
+    "ultimate": 927,
+    "premium": 585,
+    "essential": 130,
+    "console": 633,
+    "pc": 612,
+    "eaplay": 97
+  },
+  "planSigls": {
+    "ultimate": "97c6c862-d28a-4907-a3d5-c401f2296a53",
+    "premium": "09a72c0d-c466-426a-9580-b78955d8173a",
+    "essential": "34031711-5a70-4196-bab7-45757dc2294e",
+    "console": "f6f1f99f-9b49-4ccd-b3bf-4d9767a77f5e",
+    "pc": "609d944c-d395-4c0a-9ea4-e9f39b52c1ad",
+    "eaplay": "b8900d09-a491-44cc-916e-32b5acae621b"
+  }
+}

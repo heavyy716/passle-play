@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<script src="assets/js/gate.js?v=68"></script>
+<script src="assets/js/feedback.js?v=68" defer></script>
+<meta name="theme-color" content="#107C10">
+<link rel="manifest" href="manifest.webmanifest?v=68">
+<link rel="icon" href="assets/img/icons/favicon-32.png?v=68" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/icons/apple-touch-icon.png?v=68">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Passle">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+<title>Guess the Screenshot — Passle</title>
+<link rel="stylesheet" href="assets/css/style.css?v=68">
+</head>
+<body>
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('gtp_settings'))||{};if(s.og)document.body.classList.add('og-theme');else if(s.theme==='gears')document.body.classList.add('gears-theme');else if(s.light)document.body.classList.add('light-theme');}catch(e){}})();</script>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand" onclick="location.href='index.html'">
+      <div class="xlogo"><svg viewBox="0 0 24 24"><path d="M4.102 21.033A11.947 11.947 0 0 0 12 24a11.96 11.96 0 0 0 7.902-2.967c1.877-1.912-4.316-8.709-7.902-11.417-3.582 2.708-9.779 9.505-7.898 11.417zm11.16-14.406c2.5 2.961 7.484 10.313 6.076 12.912A11.942 11.942 0 0 0 24 12.004a11.95 11.95 0 0 0-3.57-8.537s-.027-.02-.082-.024c-.063-.004-.211.031-.607.257-.643.368-1.949 1.542-4.482 4.927zM3.57 3.467A11.952 11.952 0 0 0 0 12.004c0 2.4.705 4.633 1.917 6.505l.056.026c.02 0-1.61-2.735 6.083-12.94-2.532-3.386-3.838-4.56-4.482-4.928-.396-.226-.545-.261-.607-.257a.221.221 0 0 0-.082.024l-.106.028c-.011.049 1.694 2.081 4.888 5.972zM12 3.24l.037.024c.752-.503 4.184-2.712 6.437-3.223A11.947 11.947 0 0 0 12 0a11.94 11.94 0 0 0-6.47 1.898c-.023.005 4.294 1.4 6.433 3.34z"/></svg></div>
+      <h1>Pass<span class="accent">le</span></h1>
+    </div>
+    <button class="iconbtn aboutbtn" onclick="location.href='about.html'" title="About, credits &amp; sources">&#8505;&#65039;</button>
+    <button class="iconbtn" onclick="location.href='index.html'" title="Home">&#127968;</button>
+  </div>
+  <div class="tagline">&#128248; Guess the Screenshot <span class="exp-tag" title="This mode is still being tuned">Experimental</span></div>
+
+  <div class="pips" id="pips"></div>
+  <div class="stage" id="stage"></div>
+  <div id="clues" class="clues"></div>
+  <div id="guesses" class="guesses"></div>
+
+  <div id="play">
+    <div class="guessbar">
+      <input id="guessInput" type="text" placeholder="Type a game name…" autocomplete="off" spellcheck="false">
+      <div class="ac" id="ac"></div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="skipBtn">Skip</button>
+      <button class="btn primary" id="submitBtn">Guess</button>
+    </div>
+  </div>
+  <div id="result" class="hidden"></div>
+</div>
+
+<script src="assets/js/data.js?v=68"></script>
+<script src="assets/js/profile.js?v=68"></script>
+<script src="assets/js/usage.js?v=68"></script>
+<script src="assets/js/identity.js?v=68"></script>
+<script src="assets/js/leaderboard.js?v=68"></script>
+<script src="assets/js/dailyboard.js?v=68"></script>
+<script src="assets/js/lighttheme.js?v=68"></script>
+<script src="assets/js/endlesstoggle.js?v=68"></script>
+<script src="assets/js/sfx.js?v=68"></script>
+<script src="assets/js/gamepad.js?v=68"></script>
+<script src="assets/js/vkeyboard.js?v=68"></script>
+<script src="assets/js/confetti.js?v=68"></script>
+<script src="assets/js/reveal.js?v=68"></script>
+  <script src="assets/js/engine.js?v=68"></script>
+<script src="assets/js/gauntlet.js?v=68"></script>
+<script>
+(async function () {
+  await GTP.load();
+  const stage = document.getElementById('stage');
+  const img = document.createElement('img');
+  img.crossOrigin = 'anonymous';
+  // Crop-reveal wants a sharp image that always fills the frame (no
+  // letterboxing while zoomed) and a smooth zoom-out between guesses.
+  img.style.objectFit = 'cover';
+  img.style.transition = 'transform .65s cubic-bezier(.22,.61,.36,1)';
+  img.style.willChange = 'transform';
+  stage.appendChild(img);
+
+  // Progressive zoom-OUT crop: start cropped into one region of a single
+  // screenshot, then reveal more of the frame with each guess. The starting
+  // crop is deliberately not too tight (a 5x zoom showed a near-unreadable
+  // sliver), and the final reveal shows the WHOLE screenshot uncropped.
+  const ZOOM = [3.4, 2.8, 2.3, 1.85, 1.5, 1.2, 1];
+
+  // Always the same screenshot for a given answer (first landscape shot),
+  // so the crop genuinely "zooms out" instead of swapping pictures. Box art is
+  // deliberately excluded — its portrait aspect crops badly under object-fit
+  // cover, which was the "cropping isn't right" bug.
+  function shotFor(answer) {
+    const shots = (answer.images.screenshots || []);
+    return shots[0] || answer.images.hero || '';
+  }
+
+  // Deterministic focus point per game => everyone sees the same crop, and
+  // it lands on a different spot from game to game. Kept in the 30%..70% band so
+  // the tight early crop never sits on a black edge or letterbox bar.
+  function focusFor(answer) {
+    const s = String(answer.id || answer.title || '');
+    let h = 2166136261;
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+    h >>>= 0;
+    const fx = 30 + (h % 41);              // 30%..70%
+    const fy = 30 + ((h >> 8) % 41);       // 30%..70%
+    return { fx, fy };
+  }
+
+  GTPEngine.createGame({
+    mode: 'screenshot',
+    title: 'Screenshot',
+    maxGuesses: 6,
+    poolFilter: g => g.images && ((g.images.screenshots && g.images.screenshots.length) || g.images.hero),
+    reveal: function (step, answer, stageEl, cluesEl, done) {
+      const src = shotFor(answer);
+      if (img.src !== src) img.src = src || '';
+      if (done) {
+        // Reveal the full screenshot, uncropped, regardless of its aspect ratio.
+        img.style.objectFit = 'contain';
+        img.style.transformOrigin = '50% 50%';
+        img.style.transform = 'scale(1)';
+      } else {
+        const { fx, fy } = focusFor(answer);
+        const z = ZOOM[Math.min(step, ZOOM.length - 1)];
+        img.style.objectFit = 'cover';
+        img.style.transformOrigin = fx + '% ' + fy + '%';
+        img.style.transform = 'scale(' + z + ')';
+      }
+      img.style.filter = 'none';
+    },
+  });
+})();
+</script>
+</body>
+</html>

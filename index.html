@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<script src="assets/js/gate.js?v=68"></script>
+<script src="assets/js/feedback.js?v=68" defer></script>
+<meta name="theme-color" content="#107C10">
+<link rel="manifest" href="manifest.webmanifest?v=68">
+<link rel="icon" href="assets/img/icons/favicon-32.png?v=68" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/icons/apple-touch-icon.png?v=68">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Passle">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+<title>Passle — XBOX Game Pass Guessing Game</title>
+<meta name="description" content="Daily XBOX Game Pass guessing games. Guess the game from box art, screenshots, riddles, review scores, and its Game Pass tier.">
+<link rel="stylesheet" href="assets/css/style.css?v=68">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap">
+</head>
+<body>
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('gtp_settings'))||{};if(s.og)document.body.classList.add('og-theme');else if(s.theme==='gears')document.body.classList.add('gears-theme');else if(s.light)document.body.classList.add('light-theme');}catch(e){}})();</script>
+<div class="wrap wide dash">
+  <div class="dash-scene" aria-hidden="true">
+    <div class="scene-aurora"></div>
+    <div class="scene-stars"></div>
+    <svg class="scene-mtns" viewBox="0 0 1440 420" preserveAspectRatio="xMidYMax slice">
+      <defs>
+        <linearGradient id="mtF" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0d1b0a"/><stop offset="1" stop-color="#050a04"/>
+        </linearGradient>
+        <linearGradient id="mtB" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0a1508"/><stop offset="1" stop-color="#06100550"/>
+        </linearGradient>
+      </defs>
+      <path fill="url(#mtB)" d="M0 300 L160 210 L300 280 L470 170 L640 260 L820 160 L1000 250 L1180 180 L1320 250 L1440 200 L1440 420 L0 420 Z"/>
+      <path fill="url(#mtF)" d="M0 360 L120 280 L260 350 L430 250 L600 340 L760 250 L940 345 L1120 260 L1300 350 L1440 290 L1440 420 L0 420 Z"/>
+      <path fill="none" stroke="rgba(155,240,11,.28)" stroke-width="1.4" d="M0 360 L120 280 L260 350 L430 250 L600 340 L760 250 L940 345 L1120 260 L1300 350 L1440 290"/>
+    </svg>
+  </div>
+  <header class="dash-top">
+    <div class="dash-title">
+      <span class="accentbar"></span>
+      <div>
+        <div class="brandmini" onclick="location.href='index.html'">PASS<span class="accent">LE</span></div>
+        <h1 class="dash-h">Main Menu</h1>
+      </div>
+      <button class="ogsecret" id="ogSecret" title="XBOX" aria-label="XBOX">
+        <img src="assets/img/xbox-sphere.png?v=68" alt="XBOX" width="34" height="34">
+      </button>
+    </div>
+    <div class="dash-actions">
+      <button class="playercard" id="playerCard" title="Edit your profile">
+        <span class="pavatar pc-av" id="playerAvatar"></span>
+        <span class="pc-meta">
+          <span class="pc-name" id="playerName">Player</span>
+          <span class="pc-plan" id="playerPlan">ULTIMATE</span>
+        </span>
+        <span class="pc-score"><svg class="xg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.86 0 3.57.63 4.93 1.69C14.9 7.4 12 10.7 12 10.7S9.1 7.4 7.07 5.69A7.94 7.94 0 0 1 12 4zM5.69 7.07C7.4 9.1 10.7 12 10.7 12s-3.3 2.9-5.01 4.93A7.94 7.94 0 0 1 4 12c0-1.86.63-3.57 1.69-4.93zM12 20c-1.86 0-3.57-.63-4.93-1.69C9.1 16.6 12 13.3 12 13.3s2.9 3.3 4.93 5.01A7.94 7.94 0 0 1 12 20zm6.31-3.07C16.6 14.9 13.3 12 13.3 12s3.3-2.9 5.01-4.93A7.94 7.94 0 0 1 20 12c0 1.86-.63 3.57-1.69 4.93z"/></svg><b id="playerScore">0</b></span>
+      </button>
+      <button class="iconbtn dash-ib" id="leaderboardBtn" title="Leaderboard">&#127942;</button>
+      <button class="iconbtn dash-ib" id="statsBtn" title="Stats">&#128202;</button>
+      <button class="iconbtn dash-ib" id="settingsBtn" title="Settings">&#9881;&#65039;</button>
+      <button class="iconbtn dash-ib" onclick="location.href='about.html'" title="About, credits &amp; sources">&#8505;&#65039;</button>
+    </div>
+  </header>
+
+  <div class="xsphere" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><path d="M4.102 21.033A11.947 11.947 0 0 0 12 24a11.96 11.96 0 0 0 7.902-2.967c1.877-1.912-4.316-8.709-7.902-11.417-3.582 2.708-9.779 9.505-7.898 11.417zm11.16-14.406c2.5 2.961 7.484 10.313 6.076 12.912A11.942 11.942 0 0 0 24 12.004a11.95 11.95 0 0 0-3.57-8.537s-.027-.02-.082-.024c-.063-.004-.211.031-.607.257-.643.368-1.949 1.542-4.482 4.927zM3.57 3.467A11.952 11.952 0 0 0 0 12.004c0 2.4.705 4.633 1.917 6.505l.056.026c.02 0-1.61-2.735 6.083-12.94-2.532-3.386-3.838-4.56-4.482-4.928-.396-.226-.545-.261-.607-.257a.221.221 0 0 0-.082.024l-.106.028c-.011.049 1.694 2.081 4.888 5.972zM12 3.24l.037.024c.752-.503 4.184-2.712 6.437-3.223A11.947 11.947 0 0 0 12 0a11.94 11.94 0 0 0-6.47 1.898c-.023.005 4.294 1.4 6.433 3.34z"/></svg>
+  </div>
+
+  <div class="menu-views" id="menuViews">
+   <!-- ===== MAIN MENU ===== -->
+   <section class="mview mview-menu" data-view="menu">
+     <div class="menu-lead">
+       <h2 class="menu-title">Welcome back<span id="menuName"></span></h2>
+       <p class="menu-tag">Pick how you want to play today.</p>
+     </div>
+     <div class="bigmodes">
+       <button class="bigmode daily" id="pickDaily">
+         <span class="bm-ic">&#127919;</span>
+         <span class="bm-h">Daily Gauntlet</span>
+         <span class="bm-d">One round of every game, back to back &mdash; one combined score.</span>
+         <span class="bm-go">Play &#8594;</span>
+       </button>
+       <button class="bigmode endless" id="pickEndless">
+         <span class="bm-ic">&#9854;&#65039;</span>
+         <span class="bm-h">Endless</span>
+         <span class="bm-d">Pick one game and play it on a loop for as long as you like.</span>
+         <span class="bm-go">Choose game &#8594;</span>
+       </button>
+     </div>
+     <div class="menu-diffwrap">
+       <label class="menu-difflbl">Difficulty</label>
+       <div class="chips diffchips" id="menuDiff">
+         <div class="chip" data-diff="easy"></div>
+         <div class="chip" data-diff="medium"></div>
+         <div class="chip" data-diff="hard"></div>
+         <div class="chip" data-diff="legendary"></div>
+       </div>
+       <div class="small menu-diffnote" id="menuDiffNote"></div>
+     </div>
+     <div class="menu-resume" id="menuResume" hidden></div>
+   </section>
+
+   <!-- ===== DAILY GAUNTLET SETUP ===== -->
+   <section class="mview mview-setup" data-view="setup" hidden>
+     <button class="backbtn" data-back>&#8592; Back to menu</button>
+     <div class="menu-lead">
+       <h2 class="menu-title">&#127919; Daily Gauntlet</h2>
+       <p class="menu-tag">One round of each game below, in order. Tap to include or skip any.</p>
+     </div>
+     <div class="setup-grid" id="setupGrid"></div>
+     <div class="btnrow" style="justify-content:center;margin-top:16px">
+       <button class="btn" id="setupAll">Select all</button>
+       <button class="btn primary" id="startGauntlet">&#9654; Start Gauntlet</button>
+     </div>
+   </section>
+
+   <!-- ===== ENDLESS PICKER (the classic mode rail) ===== -->
+   <section class="mview mview-endless" data-view="endless" hidden>
+    <button class="backbtn" data-back>&#8592; Back to menu</button>
+    <div class="dash-rail-wrap">
+    <div class="modes dash-rail" id="modes">
+      <a class="mode-card tile sel" href="boxart.html"><span class="tile-thumb"><span class="tile-collage" id="collageBox"><img alt=""><img alt=""><img alt=""></span><svg class="tile-badge" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.86 0 3.57.63 4.93 1.69C14.9 7.4 12 10.7 12 10.7S9.1 7.4 7.07 5.69A7.94 7.94 0 0 1 12 4zM5.69 7.07C7.4 9.1 10.7 12 10.7 12s-3.3 2.9-5.01 4.93A7.94 7.94 0 0 1 4 12c0-1.86.63-3.57 1.69-4.93zM12 20c-1.86 0-3.57-.63-4.93-1.69C9.1 16.6 12 13.3 12 13.3s2.9 3.3 4.93 5.01A7.94 7.94 0 0 1 12 20zm6.31-3.07C16.6 14.9 13.3 12 13.3 12s3.3-2.9 5.01-4.93A7.94 7.94 0 0 1 20 12c0 1.86-.63 3.57-1.69 4.93z"/></svg></span><div class="tile-body"><h3>Guess the Box Art</h3><p>Can you guess the game from the box art?</p></div></a>
+      <a class="mode-card tile" href="screenshot.html"><span class="tile-thumb tshot"><img class="tile-shot" id="shotThumb" alt=""><span class="tile-camera" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 4l-1.2 2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.8L15 4H9zm3 4.5A4.5 4.5 0 1 1 7.5 13 4.5 4.5 0 0 1 12 8.5zm0 2A2.5 2.5 0 1 0 14.5 13 2.5 2.5 0 0 0 12 10.5z"/></svg></span></span><div class="tile-body"><h3>Guess the Screenshot <span class="exp-tag">Experimental</span></h3><p>Identify the game from the screenshot.</p></div></a>
+      <a class="mode-card tile" href="guessgame.html"><span class="tile-thumb tshot"><img class="tile-shot" id="ggThumb" alt=""><span class="tile-camera tile-trophy" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 2H6v2H3v3a4 4 0 0 0 4 4 5 5 0 0 0 4 3.9V18H8v2h8v-2h-3v-3.1A5 5 0 0 0 17 11a4 4 0 0 0 4-4V4h-3V2zM5 6h1v3a2 2 0 0 1-1-1.7V6zm14 1.3A2 2 0 0 1 18 9V6h1v1.3z"/></svg></span></span><div class="tile-body"><h3>Guess the Game</h3><p>New screenshot &amp; a hint each guess &mdash; name the game.</p></div></a>
+      <a class="mode-card tile" href="review.html"><span class="tile-thumb"><svg class="ic" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="gRev" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9BF00B"/><stop offset="1" stop-color="#107C10"/></linearGradient></defs><path d="M10 8h44a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H30L16 58V46h-6a6 6 0 0 1-6-6V14a6 6 0 0 1 6-6z" fill="url(#gRev)"/><g fill="#0a0d0a"><path transform="translate(32 27) scale(1.15) translate(-12 -12)" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></g></svg></span><div class="tile-body"><h3>Guess by Review</h3><p>Read the review. Name the game.</p></div></a>
+      <a class="mode-card tile" href="higherlower.html"><span class="tile-thumb"><svg class="ic" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 8l11 15H24v18h-8V23H9z" fill="#9BF00B"/><path d="M44 56L33 41h7V23h8v18h7z" fill="#5a6a52"/></svg></span><div class="tile-body"><h3>Higher or Lower</h3><p>Guess if the next game has a higher critic score.</p></div></a>
+      <a class="mode-card tile" href="tier.html"><span class="tile-thumb"><svg class="ic" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="gTier" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C7FF4A"/><stop offset="1" stop-color="#5aa30a"/></linearGradient></defs><path d="M25 40L20 60l7-5 3.5 6L34 43z" fill="#4d9a0a"/><path d="M39 40l5 20-7-5-3.5 6L30 43z" fill="#3a7a0a"/><circle cx="32" cy="23" r="18" fill="none" stroke="url(#gTier)" stroke-width="5.4" stroke-dasharray="2.6 2.2"/><circle cx="32" cy="23" r="15" fill="url(#gTier)"/><circle cx="32" cy="23" r="12.4" fill="#0a0d0a"/><g transform="translate(32 23) scale(.5) translate(-12 -12)" fill="url(#gTier)"><path d="M4.102 21.033A11.947 11.947 0 0 0 12 24a11.96 11.96 0 0 0 7.902-2.967c1.877-1.912-4.316-8.709-7.902-11.417-3.582 2.708-9.779 9.505-7.898 11.417zm11.16-14.406c2.5 2.961 7.484 10.313 6.076 12.912A11.942 11.942 0 0 0 24 12.004a11.95 11.95 0 0 0-3.57-8.537s-.027-.02-.082-.024c-.063-.004-.211.031-.607.257-.643.368-1.949 1.542-4.482 4.927zM3.57 3.467A11.952 11.952 0 0 0 0 12.004c0 2.4.705 4.633 1.917 6.505l.056.026c.02 0-1.61-2.735 6.083-12.94-2.532-3.386-3.838-4.56-4.482-4.928-.396-.226-.545-.261-.607-.257a.221.221 0 0 0-.082.024l-.106.028c-.011.049 1.694 2.081 4.888 5.972zM12 3.24l.037.024c.752-.503 4.184-2.712 6.437-3.223A11.947 11.947 0 0 0 12 0a11.94 11.94 0 0 0-6.47 1.898c-.023.005 4.294 1.4 6.433 3.34z"/></g></svg></span><div class="tile-body"><h3>Guess the Tier</h3><p>Is this game in Essential, Standard, or Ultimate?</p></div></a>
+      <a class="mode-card tile" href="riddle.html"><span class="tile-thumb"><svg class="ic" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="gRid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9BF00B"/><stop offset="1" stop-color="#107C10"/></linearGradient></defs><path d="M24 25.5a8 8 0 1 1 12.5 6.6c-2.9 2-4.5 3.4-4.5 6.4" fill="none" stroke="url(#gRid)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="47" r="4.3" fill="url(#gRid)"/></svg></span><div class="tile-body"><h3>Riddle Me This</h3><p>Solve the clue. Name the game.</p></div></a>
+      <a class="mode-card tile" href="score.html"><span class="tile-thumb"><span class="scorering"><b>87</b></span></span><div class="tile-body"><h3>Guess the Score</h3><p>Can you guess the critic score?</p></div></a>
+      <a class="mode-card tile" href="trivia.html"><span class="tile-thumb"><svg class="ic" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="gTrv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9BF00B"/><stop offset="1" stop-color="#107C10"/></linearGradient></defs><path d="M32 6C18.7 6 8 15.4 8 27c0 6.6 3.5 12.4 9 16.2V52a3 3 0 0 0 4.6 2.5L30 49.6c.7.05 1.3.1 2 .1 13.3 0 24-9.4 24-21S45.3 6 32 6z" fill="url(#gTrv)"/><path d="M26 24a6 6 0 1 1 9 5c-2.3 1.6-3 2.6-3 4.8" fill="none" stroke="#0a0d0a" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="40" r="3" fill="#0a0d0a"/></svg></span><div class="tile-body"><h3>Passle Trivia</h3><p>Daily &amp; endless quiz &mdash; how well do you know Game Pass?</p></div></a>
+    </div>
+  </div>
+   </section>
+  </div>
+
+  <div class="dash-foot">
+    <span class="foot-hint"><b class="abtn">A</b> Select</span>
+    <span class="powerline"><svg class="xg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.86 0 3.57.63 4.93 1.69C14.9 7.4 12 10.7 12 10.7S9.1 7.4 7.07 5.69A7.94 7.94 0 0 1 12 4zM5.69 7.07C7.4 9.1 10.7 12 10.7 12s-3.3 2.9-5.01 4.93A7.94 7.94 0 0 1 4 12c0-1.86.63-3.57 1.69-4.93zM12 20c-1.86 0-3.57-.63-4.93-1.69C9.1 16.6 12 13.3 12 13.3s2.9 3.3 4.93 5.01A7.94 7.94 0 0 1 12 20zm6.31-3.07C16.6 14.9 13.3 12 13.3 12s3.3-2.9 5.01-4.93A7.94 7.94 0 0 1 20 12c0 1.86-.63 3.57-1.69 4.93z"/></svg> Passle &mdash; Power Your Dreams</span>
+    <span class="foot-hint"><b class="abtn" id="settingsBtn2">&#9881;</b> Settings</span>
+  </div>
+
+  <div class="footer dash-legal">
+    Data from the public XBOX catalog. Not affiliated with Microsoft. Box art &amp; screenshots &copy; their owners.
+    <br><span id="metaLine"></span>
+    <br><a href="about.html">&#8505;&#65039; About, credits &amp; sources</a>
+    <br><a href="https://forms.cloud.microsoft/r/fxtvshUXp3" target="_blank" rel="noopener">&#128172; Having trouble or have feedback? Fill out the quick survey &#8594;</a>
+    <br>Created by <a href="https://www.linkedin.com/in/deron-mann/" target="_blank" rel="noopener">D&eacute;ron Mann</a>, Global Portfolio Team
+  </div>
+</div>
+
+<!-- ===================== OG XBOX blade dashboard ===================== -->
+<div id="ogdash" aria-hidden="true">
+  <div class="og-bg"></div>
+  <div class="og-shell">
+    <div class="og-vign"></div>
+
+    <!-- LEFT bezel: machined metal plate + vent grille + jewel + XBOX -->
+    <div class="og-cap og-cap-l">
+      <span class="og-vent"></span>
+      <span class="og-seam top"></span>
+      <span class="og-seam bot"></span>
+      <div class="og-jewelwrap">
+        <img class="og-orb-img" src="assets/img/xboxsphere.svg?v=68" alt="XBOX" width="96" height="96">
+        <img class="og-wordimg" src="assets/img/xboxword.svg?v=68" alt="XBOX" width="120">
+      </div>
+    </div>
+
+    <!-- MENU column -->
+    <section class="og-col og-menu">
+      <h2 class="og-h">SELECT MODE</h2>
+      <ul class="og-list" id="ogList">
+        <li class="og-item ok sel" data-href="boxart.html" data-cap="CAN YOU GUESS THE GAME FROM THE BOX ART?"><span>GUESS THE BOX ART</span><b class="og-a">A</b></li>
+        <li class="og-item ok" data-href="screenshot.html" data-cap="IDENTIFY THE GAME FROM A SCREENSHOT. (EXPERIMENTAL)"><span>GUESS THE SCREENSHOT <em class="og-exp">EXPERIMENTAL</em></span><b class="og-a">A</b></li>
+        <li class="og-item ok" data-href="guessgame.html" data-cap="NEW SCREENSHOT &amp; A HINT EACH GUESS. NAME THE GAME."><span>GUESS THE GAME</span><b class="og-a">A</b></li>
+        <li class="og-item na" data-cap="GUESS BY REVIEW &mdash; NOT AVAILABLE IN OG MODE."><span>GUESS BY REVIEW</span><b class="og-a">A</b></li>
+        <li class="og-item na" data-cap="HIGHER OR LOWER &mdash; NOT AVAILABLE IN OG MODE."><span>HIGHER OR LOWER</span><b class="og-a">A</b></li>
+        <li class="og-item ok" data-href="riddle.html" data-cap="SOLVE THE CLUE. NAME THE GAME."><span>RIDDLE ME THIS</span><b class="og-a">A</b></li>
+        <li class="og-item na" data-cap="GUESS THE SCORE &mdash; NOT AVAILABLE IN OG MODE."><span>GUESS THE SCORE</span><b class="og-a">A</b></li>
+        <li class="og-item ok" data-href="trivia.html" data-cap="TEST YOUR GAME PASS KNOWLEDGE."><span>PASSLE TRIVIA</span><b class="og-a">A</b></li>
+      </ul>
+      <div class="og-foot">
+        <span class="og-fbtn" id="ogSystem" role="button" tabindex="0"><b class="og-a y">Y</b> SYSTEM</span>
+        <span class="og-fbtn" id="ogHelp" role="button" tabindex="0"><b class="og-a x">X</b> HELP</span>
+        <span class="og-fbtn og-exit" id="ogExit" role="button" tabindex="0"><b class="og-a b">B</b> PASSLE HOME</span>
+      </div>
+    </section>
+
+    <!-- PREVIEW column -->
+    <section class="og-col og-preview">
+      <div class="og-h blank" aria-hidden="true">&nbsp;</div>
+      <div class="og-screen"><div class="ind-inner">
+        <div class="og-covers" id="ogCovers"><img alt=""><img alt=""><img alt=""></div>
+      </div></div>
+      <p class="og-cap-text" id="ogCap">CAN YOU GUESS THE GAME FROM THE BOX ART?</p>
+      <div class="og-select"><b class="og-a">A</b> SELECT</div>
+    </section>
+
+    <!-- RIGHT column: OG XBOX MODE + big X -->
+    <section class="og-col og-right">
+      <div class="og-modelabel">OG XBOX MODE</div>
+      <div class="og-screen og-screen-x"><div class="ind-inner">
+        <img class="og-bigx-img" src="assets/img/xboxsphere.svg?v=68" alt="XBOX" aria-hidden="true">
+        <img class="og-wordimg og-wordimg-lg" src="assets/img/xboxword.svg?v=68" alt="XBOX">
+      </div></div>
+      <div class="og-mem"><span class="og-membar"></span><span class="og-memlbl">MEMORY UNIT</span><span class="og-blocks" id="ogBlocks">4 Blocks Free</span></div>
+    </section>
+
+    <!-- RIGHT bezel (mirrored machined plate) -->
+    <div class="og-cap og-cap-r">
+      <span class="og-vent"></span>
+      <span class="og-seam top"></span>
+      <span class="og-seam bot"></span>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="settingsOverlay">
+  <div class="modal">
+    <h2>&#9881;&#65039; Settings</h2>
+    <div class="setting-row" id="ogSetRow">
+      <label>Game set</label>
+      <div class="chips" id="ogChips">
+        <div class="chip" data-og="false">Game Pass</div>
+        <div class="chip" data-og="true">&#127918; OG XBOX</div>
+      </div>
+      <div class="small" id="ogNote" style="margin-top:6px"></div>
+    </div>
+    <div class="setting-row" id="scopeRow">
+      <label>Catalog scope</label>
+      <div class="chips" id="scopeChips">
+        <div class="chip" data-scope="current">Current</div>
+        <div class="chip" data-scope="legacy">Legacy</div>
+        <div class="chip" data-scope="combined">Combined</div>
+      </div>
+      <div class="small" id="legacyNote" style="margin-top:6px"></div>
+    </div>
+    <div class="setting-row" id="planRow">
+      <label>Plan focus (pick the plans you have)</label>
+      <div class="chips" id="planChips">
+        <div class="chip" data-plan="ultimate">Ultimate</div>
+        <div class="chip" data-plan="premium">Premium</div>
+        <div class="chip" data-plan="essential">Essential</div>
+        <div class="chip" data-plan="pc">PC Game Pass</div>
+      </div>
+    </div>
+    <div class="setting-row">
+      <label>Puzzle mode</label>
+      <div class="chips" id="dailyChips">
+        <div class="chip" data-daily="true">Daily</div>
+        <div class="chip" data-daily="false">Endless</div>
+      </div>
+    </div>
+    <div class="setting-row" id="sportsRow">
+      <label>Sports games</label>
+      <div class="chips" id="sportsChips">
+        <div class="chip" data-sports="false">Off</div>
+        <div class="chip" data-sports="true">On</div>
+      </div>
+      <div class="small" id="sportsNote" style="margin-top:6px"></div>
+    </div>
+    <div class="setting-row" id="themeRow">
+      <label>Theme</label>
+      <div class="chips" id="themeChips">
+        <div class="chip" data-theme="default">&#128377;&#65039; Passle</div>
+        <div class="chip" data-theme="gears">&#9881;&#65039; Gears of War</div>
+      </div>
+      <div class="small" id="themeNote" style="margin-top:6px"></div>
+    </div>
+    <div class="setting-row">
+      <label>Difficulty (guesses &amp; hints)</label>
+      <div class="chips diffchips" id="diffChips">
+        <div class="chip" data-diff="easy">Easy</div>
+        <div class="chip" data-diff="medium">Normal</div>
+        <div class="chip" data-diff="hard">Heroic</div>
+        <div class="chip" data-diff="legendary">Legendary</div>
+      </div>
+      <div class="small" id="diffNote" style="margin-top:6px"></div>
+    </div>
+    <div class="small" id="poolInfo"></div>
+    <div class="btnrow"><button class="btn primary" id="closeSettings">Done</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="statsOverlay">
+  <div class="modal">
+    <h2>&#128202; Your Stats</h2>
+    <div id="statsBody"></div>
+    <div class="btnrow"><button class="btn primary" id="closeStats">Close</button></div>
+  </div>
+</div>
+
+<script src="assets/js/data.js?v=68"></script>
+<script src="assets/js/profile.js?v=68"></script>
+<script src="assets/js/usage.js?v=68"></script>
+<script src="assets/js/identity.js?v=68"></script>
+<script src="assets/js/leaderboard.js?v=68"></script>
+<script src="assets/js/dailyboard.js?v=68"></script>
+<script src="assets/js/lighttheme.js?v=68"></script>
+<script src="assets/js/endlesstoggle.js?v=68"></script>
+<script src="assets/js/sfx.js?v=68"></script>
+<script src="assets/js/gamepad.js?v=68"></script>
+<script src="assets/js/vkeyboard.js?v=68"></script>
+<script src="assets/js/activereload.js?v=68"></script>
+<script src="assets/js/konami.js?v=68"></script>
+<script src="assets/js/ogboot.js?v=68"></script>
+<script src="assets/js/ogintro.js?v=68"></script>
+<script src="assets/js/gearsintro.js?v=68"></script>
+<script src="assets/js/confetti.js?v=68"></script>
+<script src="assets/js/reveal.js?v=68"></script>
+  <script src="assets/js/engine.js?v=68"></script>
+<script src="assets/js/gauntlet.js?v=68"></script>
+<script>
+(async function () {
+  await GTP.load();
+  const S = GTPEngine.getSettings();
+
+  // OG mode is a hidden unlockable (Konami code via the Xbox logo).
+  const ogUnlocked = () => window.GTPKonami ? GTPKonami.unlocked() : (localStorage.getItem('gtp_og_unlocked') === '1');
+  // Gears theme is a hidden unlockable — hold the settings gear for 5 seconds.
+  const gearsUnlocked = () => localStorage.getItem('gtp_gears_unlocked') === '1' || S.theme === 'gears';
+  // Safety: never leave OG active if it hasn't been unlocked yet.
+  if (S.og && !ogUnlocked()) { S.og = false; GTPEngine.saveSettings(S); }
+
+  function paint() {
+    // The "Game set" row (Game Pass / OG toggle) only appears once unlocked.
+    document.getElementById('ogSetRow').style.display = ogUnlocked() ? '' : 'none';
+    document.querySelectorAll('#ogChips .chip').forEach(c =>
+      c.classList.toggle('on', String(!!S.og) === c.dataset.og));
+    document.querySelectorAll('#scopeChips .chip').forEach(c =>
+      c.classList.toggle('on', c.dataset.scope === S.scope));
+    document.querySelectorAll('#planChips .chip').forEach(c =>
+      c.classList.toggle('on', S.plans.includes(c.dataset.plan)));
+    document.querySelectorAll('#dailyChips .chip').forEach(c =>
+      c.classList.toggle('on', String(S.daily) === c.dataset.daily));
+    // Sports toggle: hide annual sports franchises unless opted in. Hidden in OG mode.
+    document.querySelectorAll('#sportsChips .chip').forEach(c =>
+      c.classList.toggle('on', String(!!S.sports) === c.dataset.sports));
+    document.getElementById('sportsRow').style.display = S.og ? 'none' : '';
+    document.getElementById('sportsNote').textContent = S.sports
+      ? 'Madden, FC, NHL, UFC, F1 & friends are in the mix \u2014 guess those covers too.'
+      : 'Annual sports titles (Madden, FC, NHL\u2026) are hidden. Turn on to include them.';
+    // Theme (Passle / Gears of War) — the whole row is hidden until the
+    // hold-the-gear gesture unlocks Gears, and always hidden in OG mode.
+    document.querySelectorAll('#themeChips .chip').forEach(c =>
+      c.classList.toggle('on', (S.theme || 'default') === c.dataset.theme));
+    document.getElementById('themeRow').style.display = (S.og || !gearsUnlocked()) ? 'none' : '';
+    document.getElementById('themeNote').textContent = S.theme === 'gears'
+      ? 'Crimson gritty Gears skin \u2014 difficulties become Casual / Normal / Hardcore / Insane.'
+      : 'Classic XBOX green \u2014 Halo 3 difficulties (Easy / Normal / Heroic / Legendary).';
+    // Difficulty chips: names + emblems follow the active theme (Halo vs Gears).
+    document.querySelectorAll('#diffChips .chip').forEach(c => {
+      const k = c.dataset.diff;
+      c.classList.toggle('on', (S.difficulty || 'medium') === k);
+      c.innerHTML = GTPEngine.diffIcon(k, S) + '<span class="dlbl">' + GTPEngine.diffLabel(k, S) + '</span>';
+    });
+    const dd = GTPEngine.difficulty(S);
+    document.getElementById('diffNote').textContent =
+      dd.guesses + ' guess' + (dd.guesses === 1 ? '' : 'es') + ' \u2022 ' +
+      dd.hints + ' hint' + (dd.hints === 1 ? '' : 's') +
+      (dd.hints === 0 ? ' \u2014 no help, no mercy' : '');
+    // OG mode ignores Game Pass scope/plans, so hide those rows and re-skin.
+    GTPEngine.applyTheme(S);
+    document.getElementById('scopeRow').style.display = S.og ? 'none' : '';
+    document.getElementById('planRow').style.display = S.og ? 'none' : '';
+    document.getElementById('ogNote').textContent = S.og
+      ? 'Original XBOX classics (backward-compatible). Box Art & Riddle modes only.'
+      : '';
+    const pool = GTP.pool(S);
+    document.getElementById('poolInfo').textContent = S.og
+      ? pool.length + ' original XBOX games.'
+      : GTP.noSelection(S)
+        ? '0 games — select at least one Game Pass plan above to play.'
+        : pool.length + ' games in the current selection.';
+    renderPlayer();
+    paintTiles();
+    ogPaint();
+    renderMenuDiff();
+    renderResume();
+  }
+
+  // ---- Main-menu views (menu / gauntlet setup / endless picker) ----
+  function showView(name) {
+    document.querySelectorAll('#menuViews .mview').forEach(v =>
+      v.hidden = v.getAttribute('data-view') !== name);
+    if (name === 'setup') renderSetup();
+    try { window.scrollTo(0, 0); } catch (e) {}
+  }
+  function renderMenuDiff() {
+    document.querySelectorAll('#menuDiff .chip').forEach(c => {
+      const k = c.dataset.diff;
+      c.classList.toggle('on', (S.difficulty || 'medium') === k);
+      c.innerHTML = GTPEngine.diffIcon(k, S) + '<span class="dlbl">' + GTPEngine.diffLabel(k, S) + '</span>';
+    });
+    const dd = GTPEngine.difficulty(S);
+    const note = document.getElementById('menuDiffNote');
+    if (note) note.textContent = dd.guesses + ' guess' + (dd.guesses === 1 ? '' : 'es') +
+      ' \u2022 ' + dd.hints + ' hint' + (dd.hints === 1 ? '' : 's') + (dd.hints === 0 ? ' \u2014 no mercy' : '');
+    const mn = document.getElementById('menuName');
+    if (mn) { const p = window.GTPProfile ? GTPProfile.current() : null; mn.textContent = (p && p.name && p.name !== 'Player') ? (', ' + p.name) : ''; }
+  }
+  function renderResume() {
+    const box = document.getElementById('menuResume');
+    if (!box) return;
+    if (window.GTPGauntlet && GTPGauntlet.active()) {
+      const run = GTPGauntlet.state();
+      box.hidden = false;
+      box.innerHTML = '<span class="mr-txt">\uD83C\uDFAF Gauntlet in progress \u2014 game ' +
+        (run.idx + 1) + '/' + run.order.length + '</span>' +
+        '<button class="btn" id="resumeG">Resume</button><button class="btn ghost" id="dropG">Quit</button>';
+      document.getElementById('resumeG').onclick = () => { location.href = GTPGauntlet.modeInfo(run.order[run.idx]).href; };
+      document.getElementById('dropG').onclick = () => { GTPGauntlet.quit(); };
+    } else { box.hidden = true; box.innerHTML = ''; }
+  }
+  let setupSel = null;
+  function renderSetup() {
+    const grid = document.getElementById('setupGrid');
+    if (!grid) return;
+    const avail = GTPGauntlet.MODES.filter(m => S.og ? m.ogOk : true);
+    if (!setupSel) { setupSel = {}; avail.forEach(m => setupSel[m.mode] = true); }
+    grid.innerHTML = avail.map((m, i) => {
+      const on = setupSel[m.mode] !== false;
+      return '<button class="setup-card' + (on ? ' on' : '') + '" data-mode="' + m.mode + '" role="checkbox" aria-checked="' + on + '" tabindex="0">' +
+        '<span class="sc-no">' + (i + 1) + '</span><span class="sc-ic">' + m.icon + '</span>' +
+        '<span class="sc-nm">' + m.label + '</span>' +
+        '<span class="sc-tick">' + (on ? '\u2714' : '') + '</span></button>';
+    }).join('');
+    grid.querySelectorAll('.setup-card').forEach(c => {
+      c.onclick = () => { const mm = c.dataset.mode; setupSel[mm] = setupSel[mm] === false; renderSetup(); };
+      c.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); c.click(); } });
+    });
+    const first = grid.querySelector('.setup-card'); if (first) { try { first.focus(); } catch (e) {} }
+    updateStart();
+  }
+  function selectedModes() { return Object.keys(setupSel || {}).filter(k => setupSel[k] !== false); }
+  function updateStart() {
+    const btn = document.getElementById('startGauntlet');
+    const avail = GTPGauntlet.MODES.filter(m => S.og ? m.ogOk : true).map(m => m.mode);
+    const n = selectedModes().filter(m => avail.indexOf(m) >= 0).length;
+    if (btn) { btn.disabled = n === 0; btn.innerHTML = '\u25B6 Start Gauntlet (' + n + ')'; }
+  }
+
+  // ---- OG Xbox blade dashboard ----
+  function ogPaint() {
+    const on = !!S.og;
+    document.getElementById('ogdash').setAttribute('aria-hidden', String(!on));
+    if (!on) return;
+    const covers = (GTP.ogGames || []).filter(g => g.images && g.images.boxart);
+    const imgs = document.querySelectorAll('#ogCovers img');
+    const picks = sample(covers, 3);
+    imgs.forEach((im, i) => {
+      const g = picks[i] || picks[0];
+      if (g) { im.src = g.images.boxart; im.style.visibility = 'visible'; }
+      else im.style.visibility = 'hidden';
+    });
+    const blocks = document.getElementById('ogBlocks');
+    if (blocks) blocks.textContent = '4 Blocks Free';
+  }
+
+  // ---- Real imagery in the Box Art & Screenshot tiles ----
+  function pickImages() {
+    let pool = GTP.pool(S);
+    if (!pool || !pool.length) pool = GTP.games;
+    const covers = pool.filter(g => g.images && g.images.boxart);
+    const shots = pool.filter(g => g.images && ((g.images.screenshots && g.images.screenshots.length) || g.images.hero));
+    return { covers, shots };
+  }
+  function sample(arr, n) {
+    const a = arr.slice(); const out = [];
+    for (let i = 0; i < n && a.length; i++) out.push(a.splice(Math.floor(Math.random() * a.length), 1)[0]);
+    return out;
+  }
+  function paintTiles() {
+    const { covers, shots } = pickImages();
+    const box = document.getElementById('collageBox');
+    if (box) {
+      const imgs = box.querySelectorAll('img');
+      const picks = sample(covers, 3);
+      imgs.forEach((im, i) => {
+        const g = picks[i] || picks[0];
+        if (g) { im.src = g.images.boxart; im.style.visibility = 'visible'; }
+        else im.style.visibility = 'hidden';
+      });
+    }
+    const shot = document.getElementById('shotThumb');
+    if (shot) {
+      const g = sample(shots, 1)[0];
+      const src = g && ((g.images.screenshots && g.images.screenshots[0]) || g.images.hero || g.images.boxart);
+      if (src) { shot.src = src; shot.style.visibility = 'visible'; }
+      else shot.style.visibility = 'hidden';
+    }
+    const gg = document.getElementById('ggThumb');
+    if (gg) {
+      const withShots = shots.filter(g => g.images.screenshots && g.images.screenshots.length >= 2);
+      const g = sample(withShots.length ? withShots : shots, 1)[0];
+      const arr = g && g.images.screenshots;
+      const src = (arr && (arr[1] || arr[0])) || (g && (g.images.hero || g.images.boxart));
+      if (src) { gg.src = src; gg.style.visibility = 'visible'; }
+      else gg.style.visibility = 'hidden';
+    }
+  }
+
+  // ---- Xbox-style player card (avatar + plan + gamerscore) ----
+  const PLAN_LABEL = { ultimate: 'ULTIMATE', premium: 'PREMIUM', essential: 'ESSENTIAL', pc: 'PC GAME PASS' };
+  function planBadge() {
+    if (S.og) return 'OG XBOX';
+    if (GTP.noSelection(S)) return 'NO PLAN';
+    for (const p of ['ultimate', 'premium', 'essential', 'pc']) if (S.plans.includes(p)) return PLAN_LABEL[p];
+    return 'GAME PASS';
+  }
+  function gamerscore() {
+    let wins = 0;
+    for (const m of ['boxart', 'screenshot', 'guessgame', 'riddle', 'tier', 'review', 'higherlower', 'score']) {
+      try { wins += (GTP.stats.get(m).wins || 0); } catch (e) {}
+    }
+    return wins * 10;
+  }
+  function renderPlayer() {
+    const p = (window.GTPProfile ? GTPProfile.current() : { name: 'Player', avatar: '20003', color: '#107C10' });
+    const av = document.getElementById('playerAvatar');
+    if (av) { av.innerHTML = GTPProfile ? GTPProfile.img(p.avatar) : ''; av.style.borderColor = p.color; }
+    const nm = document.getElementById('playerName'); if (nm) nm.textContent = p.name;
+    const pl = document.getElementById('playerPlan'); if (pl) pl.textContent = planBadge();
+    const sc = document.getElementById('playerScore'); if (sc) sc.textContent = gamerscore().toLocaleString();
+  }
+
+  const hasLegacy = GTP.games.some(g => g.legacy);
+  const legacyChip = document.querySelector('[data-scope="legacy"]');
+  const combinedChip = document.querySelector('[data-scope="combined"]');
+  if (!hasLegacy) {
+    legacyChip.classList.add('disabled');
+    combinedChip.classList.add('disabled');
+    document.getElementById('legacyNote').textContent =
+      'Legacy (games that have left Game Pass) is coming in a future update.';
+    if (S.scope !== 'current') { S.scope = 'current'; GTPEngine.saveSettings(S); }
+  }
+
+  document.querySelectorAll('#ogChips .chip').forEach(c => c.onclick = () => {
+    if (c.dataset.og === 'true' && !ogUnlocked()) return; // still locked
+    const turningOn = c.dataset.og === 'true' && !S.og;
+    S.og = c.dataset.og === 'true'; setupSel = null; GTPEngine.saveSettings(S); paint(); markModes();
+    if (turningOn && window.PassleOGBoot) (window.PassleOGIntro ? PassleOGIntro.play : PassleOGBoot.play)({ gestured: true });
+  });
+
+  // Konami code entered on the mini controller → unlock + activate OG mode.
+  window.addEventListener('gtp:og-unlock', () => {
+    const turningOn = !S.og;
+    S.og = true; GTPEngine.saveSettings(S); paint(); markModes();
+    if (turningOn && window.PassleOGBoot) (window.PassleOGIntro ? PassleOGIntro.play : PassleOGBoot.play)({ gestured: true });
+  });
+  document.querySelectorAll('#scopeChips .chip').forEach(c => c.onclick = () => {
+    if (c.classList.contains('disabled')) return;
+    S.scope = c.dataset.scope; GTPEngine.saveSettings(S); paint();
+  });
+  document.querySelectorAll('#planChips .chip').forEach(c => c.onclick = () => {
+    const p = c.dataset.plan;
+    const i = S.plans.indexOf(p);
+    if (i >= 0) S.plans.splice(i, 1); else S.plans.push(p);
+    GTPEngine.saveSettings(S); paint();
+  });
+  document.querySelectorAll('#dailyChips .chip').forEach(c => c.onclick = () => {
+    S.daily = c.dataset.daily === 'true'; GTPEngine.saveSettings(S); paint();
+  });
+  document.querySelectorAll('#sportsChips .chip').forEach(c => c.onclick = () => {
+    S.sports = c.dataset.sports === 'true'; GTPEngine.saveSettings(S); paint();
+  });
+  document.querySelectorAll('#diffChips .chip').forEach(c => c.onclick = () => {
+    S.difficulty = c.dataset.diff; GTPEngine.saveSettings(S); paint();
+  });
+  document.querySelectorAll('#themeChips .chip').forEach(c => c.onclick = () => {
+    S.theme = c.dataset.theme; GTPEngine.saveSettings(S); paint();
+  });
+
+  // Make every settings chip reachable by keyboard and controller: the chips are
+  // <div>s, so without a tabindex the gamepad/Tab focus system skips them and the
+  // menu feels un-navigable. Enter/Space activate the focused chip; disabled ones
+  // are taken out of the focus order.
+  document.querySelectorAll('#settingsOverlay .chip').forEach(c => {
+    c.setAttribute('role', 'button');
+    c.setAttribute('tabindex', c.classList.contains('disabled') ? '-1' : '0');
+    c.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); c.click(); }
+    });
+  });
+
+  // In OG mode only Box Art and Riddle have data; grey out the rest.
+  const OG_OK = new Set(['boxart.html', 'riddle.html', 'screenshot.html', 'guessgame.html']);
+  function markModes() {
+    document.querySelectorAll('#modes .mode-card').forEach(card => {
+      const href = (card.getAttribute('href') || card.dataset.href || '').split('/').pop();
+      const off = S.og && !OG_OK.has(href);
+      card.classList.toggle('mode-off', off);
+      if (off) { card.setAttribute('aria-disabled', 'true'); card.dataset.href = href; card.removeAttribute('href'); }
+      else if (card.dataset.href) { card.setAttribute('href', card.dataset.href); card.removeAttribute('aria-disabled'); }
+    });
+  }
+
+  paint();
+  markModes();
+
+  // ---- Main-menu navigation wiring ----
+  (function wireMenu() {
+    const pd = document.getElementById('pickDaily');
+    const pe = document.getElementById('pickEndless');
+    // If a Daily Gauntlet is already underway, the Daily button RESUMES it (drops
+    // you back on the current game) instead of reopening setup — which would wipe
+    // the run and regenerate a fresh one.
+    if (pd) pd.onclick = () => {
+      try { if (window.GTPSfx) GTPSfx.click(); } catch (e) {}
+      if (window.GTPGauntlet && GTPGauntlet.active()) {
+        const run = GTPGauntlet.state();
+        location.href = GTPGauntlet.modeInfo(run.order[run.idx]).href;
+        return;
+      }
+      showView('setup');
+    };
+    if (pe) pe.onclick = () => { try { if (window.GTPSfx) GTPSfx.click(); } catch (e) {} showView('endless'); };
+    document.querySelectorAll('#menuViews [data-back]').forEach(b => b.onclick = () => showView('menu'));
+    document.querySelectorAll('#menuDiff .chip').forEach(c => {
+      c.setAttribute('role', 'button'); c.setAttribute('tabindex', '0');
+      c.onclick = () => { S.difficulty = c.dataset.diff; GTPEngine.saveSettings(S); paint(); };
+      c.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); c.click(); } });
+    });
+    const setupAll = document.getElementById('setupAll');
+    if (setupAll) setupAll.onclick = () => { setupSel = null; renderSetup(); };
+    const startBtn = document.getElementById('startGauntlet');
+    if (startBtn) startBtn.onclick = () => {
+      const avail = GTPGauntlet.MODES.filter(m => S.og ? m.ogOk : true).map(m => m.mode);
+      const sel = selectedModes().filter(m => avail.indexOf(m) >= 0);
+      if (!sel.length) return;
+      // Don't silently blow away a gauntlet that's already in progress.
+      if (window.GTPGauntlet && GTPGauntlet.active() &&
+          !confirm('A Daily Gauntlet is already in progress. Start a new one and discard it?')) return;
+      try { if (window.GTPSfx) GTPSfx.click(); } catch (e) {}
+      GTPGauntlet.start(sel, S.difficulty, S.og);
+    };
+    // Launching a game from the Endless picker plays it on a loop.
+    document.querySelectorAll('#modes .mode-card').forEach(card =>
+      card.addEventListener('click', () => { S.daily = false; GTPEngine.saveSettings(S); }));
+    // Deep links from the summary page (?view=endless / ?view=setup) and the
+    // Teams "Leaderboard" tab (?view=leaderboard).
+    try {
+      const qv = new URLSearchParams(location.search).get('view');
+      if (qv === 'endless' || qv === 'setup') showView(qv);
+      else if (qv === 'leaderboard') {
+        setTimeout(function () { try { if (window.GTPLeaderboard) GTPLeaderboard.open(); } catch (e) {} }, 400);
+      }
+    } catch (e) {}
+  })();
+  if (GTP.meta) {
+    document.getElementById('metaLine').textContent =
+      'Catalog: ' + GTP.meta.count + ' games • built ' + (GTP.meta.built || '').slice(0, 10);
+  }
+
+  const modes = [
+    ['boxart', '&#127918; Box Art'], ['screenshot', '&#128248; Screenshot'],
+    ['guessgame', '&#127942; Guess the Game'],
+    ['riddle', '&#129513; Riddle'], ['tier', '&#127903;&#65039; Tier'],
+    ['higherlower', '&#9878;&#65039; Higher/Lower'], ['score', '&#127919; Score'],
+  ];
+  document.getElementById('statsBtn').onclick = () => {
+    const body = modes.map(([m, lbl]) => {
+      const s = GTP.stats.get(m);
+      return '<div class="grow"><span class="nm">' + lbl + '</span>' +
+        '<span class="small">' + (s.played || 0) + ' played • ' +
+        (s.played ? Math.round(100 * s.wins / s.played) : 0) + '% • &#128293;' +
+        (s.curStreak || 0) + '</span></div>';
+    }).join('');
+    document.getElementById('statsBody').innerHTML = body;
+    document.getElementById('statsOverlay').classList.add('show');
+  };
+  document.getElementById('closeStats').onclick = () =>
+    document.getElementById('statsOverlay').classList.remove('show');
+
+  // ---- settings overlay ----
+  const settingsOverlay = document.getElementById('settingsOverlay');
+  function openSettings() { settingsOverlay.classList.add('show'); }
+  function closeSettings() { settingsOverlay.classList.remove('show'); }
+  // NOTE: #settingsBtn click is wired inside wireGearsHold() below (so a completed
+  // 5-second hold can suppress the click without also opening Settings).
+  const settingsBtn2 = document.getElementById('settingsBtn2');
+  if (settingsBtn2) settingsBtn2.onclick = openSettings;
+  document.getElementById('closeSettings').onclick = closeSettings;
+  settingsOverlay.addEventListener('click', e => { if (e.target === settingsOverlay) closeSettings(); });
+
+  // ---- Hold the settings gear for 5s to unlock the Gears of War theme ----
+  (function wireGearsHold() {
+    const gear = document.getElementById('settingsBtn');
+    if (!gear) return;
+    const HOLD_MS = 5000;
+    let timer = null, raf = null, start = 0, fired = false;
+
+    function setCharge(p) { gear.style.setProperty('--charge', (p * 100).toFixed(1) + '%'); }
+    function tick() {
+      const p = Math.min(1, (performance.now() - start) / HOLD_MS);
+      setCharge(p);
+      if (p < 1) raf = requestAnimationFrame(tick);
+    }
+    function cancel() {
+      if (timer) { clearTimeout(timer); timer = null; }
+      if (raf) { cancelAnimationFrame(raf); raf = null; }
+      gear.classList.remove('charging');
+      setCharge(0);
+    }
+    function begin(e) {
+      if (e.button !== undefined && e.button !== 0) return; // left / touch only
+      if (gearsUnlocked() && S.theme === 'gears') return;    // already on; plain click toggles in Settings
+      fired = false;
+      start = performance.now();
+      gear.classList.add('charging');
+      raf = requestAnimationFrame(tick);
+      timer = setTimeout(() => { fired = true; cancel(); unlockGears(); }, HOLD_MS);
+    }
+    gear.addEventListener('pointerdown', begin);
+    gear.addEventListener('pointerup', cancel);
+    gear.addEventListener('pointerleave', cancel);
+    gear.addEventListener('pointercancel', cancel);
+    // If the 5s hold completed, swallow the click so Settings doesn't also open.
+    gear.addEventListener('click', e => {
+      if (fired) { e.preventDefault(); e.stopImmediatePropagation(); fired = false; return; }
+      openSettings();
+    });
+
+    function unlockGears() {
+      try { localStorage.setItem('gtp_gears_unlocked', '1'); } catch (e) {}
+      S.theme = 'gears'; GTPEngine.saveSettings(S);
+      GTPEngine.applyTheme(S); paint();
+      // Full "power on" moment: achievement toast, then the Crimson Omen boot
+      // (which plays the Gears fanfare itself). Fall back to the plain toast +
+      // audio if the intro module isn't loaded.
+      if (window.PassleGearsIntro && PassleGearsIntro.play) {
+        PassleGearsIntro.play({ gestured: true });
+      } else {
+        try { if (window.GTPSfx) GTPSfx.gearsBoot(); } catch (e) {}
+        gearsAchievement();
+      }
+    }
+
+    // Let the controller's active-reload mini-game unlock Gears too.
+    window.PassleGears = {
+      unlock: function () { if (!(gearsUnlocked() && S.theme === 'gears')) unlockGears(); },
+      unlocked: gearsUnlocked,
+    };
+    window.addEventListener('gtp:gears-unlock', window.PassleGears.unlock);
+  })();
+
+  const XLOGO_SVG = '<svg viewBox="0 0 24 24"><path d="M4.102 21.033A11.947 11.947 0 0 0 12 24a11.96 11.96 0 0 0 7.902-2.967c1.877-1.912-4.316-8.709-7.902-11.417-3.582 2.708-9.779 9.505-7.898 11.417zm11.16-14.406c2.5 2.961 7.484 10.313 6.076 12.912A11.942 11.942 0 0 0 24 12.004a11.95 11.95 0 0 0-3.57-8.537s-.027-.02-.082-.024c-.063-.004-.211.031-.607.257-.643.368-1.949 1.542-4.482 4.927zM3.57 3.467A11.952 11.952 0 0 0 0 12.004c0 2.4.705 4.633 1.917 6.505l.056.026c.02 0-1.61-2.735 6.083-12.94-2.532-3.386-3.838-4.56-4.482-4.928-.396-.226-.545-.261-.607-.257a.221.221 0 0 0-.082.024l-.106.028c-.011.049 1.694 2.081 4.888 5.972zM12 3.24l.037.024c.752-.503 4.184-2.712 6.437-3.223A11.947 11.947 0 0 0 12 0a11.94 11.94 0 0 0-6.47 1.898c-.023.005 4.294 1.4 6.433 3.34z"/></svg>';
+  function gearsAchievement() {
+    try { if (window.GTPSfx) GTPSfx.achievement(); } catch (e) {}
+    let toast = document.getElementById('achToast');
+    if (toast) toast.remove();
+    toast = document.createElement('div');
+    toast.id = 'achToast';
+    toast.className = 'ach-toast';
+    toast.innerHTML =
+      '<div class="ach-ring"><span class="ach-x">' + XLOGO_SVG + '</span></div>' +
+      '<div class="ach-body">' +
+        '<div class="ach-line"><span class="ach-g">' + XLOGO_SVG + ' 100</span>' +
+        '<span class="ach-h">Achievement Unlocked</span></div>' +
+        '<div class="ach-d">Welcome to Gears Mode \u2014 Power Your Dreams</div>' +
+      '</div>';
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => toast.classList.remove('show'), 5200);
+    setTimeout(() => { if (toast && toast.parentNode) toast.remove(); }, 5900);
+  }
+
+  // ---- player card ----
+  const playerCard = document.getElementById('playerCard');
+  if (playerCard) playerCard.onclick = () => { if (window.GTPProfile && GTPProfile.edit) GTPProfile.edit(); };
+  const leaderboardBtn = document.getElementById('leaderboardBtn');
+  if (leaderboardBtn) leaderboardBtn.onclick = () => { if (window.GTPLeaderboard) GTPLeaderboard.open(); };
+  document.addEventListener('gtp:profilechange', renderPlayer);
+
+  // ---- OG blade dashboard interactions ----
+  (function wireOG() {
+    const cap = document.getElementById('ogCap');
+    const items = document.querySelectorAll('#ogList .og-item');
+    function focusItem(li) {
+      if (!li) return;
+      items.forEach(x => x.classList.remove('sel'));
+      li.classList.add('sel');
+      if (cap && li.dataset.cap) cap.innerHTML = li.dataset.cap;
+    }
+    function activate(li) {
+      if (li.classList.contains('ok') && li.dataset.href) location.href = li.dataset.href;
+    }
+    items.forEach(li => {
+      li.addEventListener('mouseenter', () => focusItem(li));
+      li.addEventListener('click', () => { focusItem(li); activate(li); });
+      if (li.classList.contains('ok')) {
+        li.setAttribute('tabindex', '0');
+        li.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(li); } });
+        li.addEventListener('focus', () => focusItem(li));
+      }
+    });
+    const sys = document.getElementById('ogSystem');
+    const help = document.getElementById('ogHelp');
+    if (sys) { sys.onclick = openSettings; sys.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSettings(); } }); }
+    if (help) { help.onclick = () => location.href = 'about.html'; help.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); location.href = 'about.html'; } }); }
+    // Leave OG mode entirely and return to the normal Passle dashboard.
+    const exit = document.getElementById('ogExit');
+    function leaveOG() {
+      S.og = false; GTPEngine.saveSettings(S);
+      try { if (window.GTPSfx) GTPSfx.click(); } catch (e) {}
+      location.reload();
+    }
+    if (exit) { exit.onclick = leaveOG; exit.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); leaveOG(); } }); }
+    window.PassleExitOG = leaveOG;
+  })();
+})();
+</script>
+</body>
+</html>

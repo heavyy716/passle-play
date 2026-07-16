@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<script src="assets/js/gate.js?v=68"></script>
+<script src="assets/js/feedback.js?v=68" defer></script>
+<meta name="theme-color" content="#107C10">
+<link rel="manifest" href="manifest.webmanifest?v=68">
+<link rel="icon" href="assets/img/icons/favicon-32.png?v=68" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/icons/apple-touch-icon.png?v=68">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Passle">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+<title>Guess the Game — Passle</title>
+<link rel="stylesheet" href="assets/css/style.css?v=68">
+</head>
+<body>
+<script>(function(){try{var s=JSON.parse(localStorage.getItem('gtp_settings'))||{};if(s.og)document.body.classList.add('og-theme');else if(s.theme==='gears')document.body.classList.add('gears-theme');else if(s.light)document.body.classList.add('light-theme');}catch(e){}})();</script>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand" onclick="location.href='index.html'">
+      <div class="xlogo"><svg viewBox="0 0 24 24"><path d="M4.102 21.033A11.947 11.947 0 0 0 12 24a11.96 11.96 0 0 0 7.902-2.967c1.877-1.912-4.316-8.709-7.902-11.417-3.582 2.708-9.779 9.505-7.898 11.417zm11.16-14.406c2.5 2.961 7.484 10.313 6.076 12.912A11.942 11.942 0 0 0 24 12.004a11.95 11.95 0 0 0-3.57-8.537s-.027-.02-.082-.024c-.063-.004-.211.031-.607.257-.643.368-1.949 1.542-4.482 4.927zM3.57 3.467A11.952 11.952 0 0 0 0 12.004c0 2.4.705 4.633 1.917 6.505l.056.026c.02 0-1.61-2.735 6.083-12.94-2.532-3.386-3.838-4.56-4.482-4.928-.396-.226-.545-.261-.607-.257a.221.221 0 0 0-.082.024l-.106.028c-.011.049 1.694 2.081 4.888 5.972zM12 3.24l.037.024c.752-.503 4.184-2.712 6.437-3.223A11.947 11.947 0 0 0 12 0a11.94 11.94 0 0 0-6.47 1.898c-.023.005 4.294 1.4 6.433 3.34z"/></svg></div>
+      <h1>Pass<span class="accent">le</span></h1>
+    </div>
+    <button class="iconbtn aboutbtn" onclick="location.href='about.html'" title="About, credits &amp; sources">&#8505;&#65039;</button>
+    <button class="iconbtn" onclick="location.href='index.html'" title="Home">&#127968;</button>
+  </div>
+  <div class="tagline">&#127942; Guess the Game</div>
+
+  <div class="pips" id="pips"></div>
+  <div class="stage" id="stage"></div>
+  <div id="clues" class="clues"></div>
+  <div id="guesses" class="guesses"></div>
+
+  <div id="play">
+    <div class="guessbar">
+      <input id="guessInput" type="text" placeholder="Type a game name…" autocomplete="off" spellcheck="false">
+      <div class="ac" id="ac"></div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="skipBtn">Skip</button>
+      <button class="btn primary" id="submitBtn">Guess</button>
+    </div>
+  </div>
+  <div id="result" class="hidden"></div>
+</div>
+
+<script src="assets/js/data.js?v=68"></script>
+<script src="assets/js/profile.js?v=68"></script>
+<script src="assets/js/usage.js?v=68"></script>
+<script src="assets/js/identity.js?v=68"></script>
+<script src="assets/js/leaderboard.js?v=68"></script>
+<script src="assets/js/dailyboard.js?v=68"></script>
+<script src="assets/js/lighttheme.js?v=68"></script>
+<script src="assets/js/endlesstoggle.js?v=68"></script>
+<script src="assets/js/sfx.js?v=68"></script>
+<script src="assets/js/gamepad.js?v=68"></script>
+<script src="assets/js/vkeyboard.js?v=68"></script>
+<script src="assets/js/confetti.js?v=68"></script>
+<script src="assets/js/reveal.js?v=68"></script>
+  <script src="assets/js/engine.js?v=68"></script>
+<script src="assets/js/gauntlet.js?v=68"></script>
+<script>
+(async function () {
+  await GTP.load();
+  const stage = document.getElementById('stage');
+  const img = document.createElement('img');
+  img.crossOrigin = 'anonymous';
+  // Different full screenshots each guess — show them whole & sharp.
+  img.style.transition = 'opacity .35s ease';
+  stage.appendChild(img);
+
+  const MAX = 6;
+
+  // Hide the answer's own words inside any hint text so a clue never gives
+  // the name away.
+  function mask(text, title) {
+    if (!text) return '';
+    const words = GTP.norm(title).split(' ').filter(w => w.length > 2);
+    let out = text;
+    words.forEach(w => {
+      const re = new RegExp('\\b' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\w*', 'gi');
+      out = out.replace(re, '\u2588\u2588\u2588');
+    });
+    return out;
+  }
+  function skeleton(title) {
+    return title.replace(/[A-Za-z0-9]/g, '_').replace(/ /g, '   ');
+  }
+  function initials(title) {
+    return title.split(/\s+/)
+      .map(w => { const m = w.match(/[A-Za-z0-9]/); return m ? m[0].toUpperCase() : ''; })
+      .filter(Boolean).join('.\u2009');
+  }
+
+  // Progressive hints (cryptic -> specific), one revealed per wrong guess.
+  function buildHints(g) {
+    const hints = [];
+    const cat = g.category || (g.categories && g.categories[0]) || '';
+    if (cat) hints.push(['Genre', mask(cat, g.title)]);
+    if (g.year) hints.push(['Released', String(g.year)]);
+    if (g.developer) hints.push(['Developer', mask(g.developer, g.title)]);
+    const pub = g.publisher && GTP.norm(g.publisher) !== GTP.norm(g.developer || '') ? g.publisher : '';
+    if (pub) hints.push(['Publisher', mask(pub, g.title)]);
+    const letters = g.title.replace(/[^A-Za-z0-9]/g, '').length;
+    hints.push(['Title', skeleton(g.title) + '   \u2014 initials ' + initials(g.title) + '  (' + letters + ' letters)']);
+    return hints;
+  }
+
+  GTPEngine.createGame({
+    mode: 'guessgame',
+    title: 'Guess the Game',
+    maxGuesses: MAX,
+    // Needs a few different screenshots for the reveal to work.
+    poolFilter: g => g.images && g.images.screenshots && g.images.screenshots.length >= 2,
+    hint: function (g) {
+      const letters = g.title.replace(/[^A-Za-z0-9]/g, '').length;
+      return 'Title initials: ' + initials(g.title) + '.  (' + letters + ' letters)';
+    },
+    reveal: function (step, answer, stageEl, cluesEl, done) {
+      const shots = answer.images.screenshots || [];
+      const total = Math.min(shots.length, MAX);
+      const idx = done ? total - 1 : Math.min(step, total - 1);
+      const src = shots[idx] || answer.images.hero || answer.images.boxart || '';
+      if (img.getAttribute('src') !== src) {
+        img.style.opacity = '0';
+        img.onload = () => { img.style.opacity = '1'; };
+        img.src = src;
+      }
+      // caption + accumulating hints
+      const shownAt = done ? total : (idx + 1);
+      const caption = '<div class="clue shotcount"><span class="lbl">\uD83D\uDCF7 Screenshot</span>' +
+        shownAt + ' of ' + total + '</div>';
+      const hints = buildHints(answer);
+      const nHints = done ? hints.length : Math.min(step, hints.length);
+      const hintHtml = hints.slice(0, nHints).map(([lbl, txt]) =>
+        '<div class="clue"><span class="lbl">' + lbl + '</span>' + GTPEngine.escapeHtml(txt) + '</div>'
+      ).join('');
+      cluesEl.innerHTML = caption + hintHtml;
+    },
+  });
+})();
+</script>
+</body>
+</html>
